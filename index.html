@@ -366,6 +366,60 @@
       overflow-x: hidden;
       align-self: center;
     }
+    .realtime-table {
+      width: 98%;
+      max-width: 1200px;
+      margin: 24px auto 15px auto;
+      border-collapse: collapse;
+      background: #1b2438;
+      border-radius: 14px;
+      box-shadow: 0 2px 14px #0a2a5a22;
+      overflow-x: auto;
+    }
+    .realtime-table th, .realtime-table td {
+      padding: 9px 17px;
+      border-bottom: 1px solid #314264;
+      font-size: 1em;
+      font-family: 'Poppins', Arial, sans-serif;
+    }
+    .realtime-table th {
+      background: #17305c;
+      color: #bbdefb;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      border-top: none;
+    }
+    .realtime-table tr:last-child td {
+      border-bottom: none;
+    }
+    .realtime-table td {
+      color: #e3f3ff;
+      font-weight: 600;
+    }
+    @media (max-width: 900px) {
+      .realtime-table th, .realtime-table td {
+        padding: 8px 6px;
+        font-size: 0.99em;
+      }
+      .realtime-table {
+        font-size: 0.98em;
+      }
+    }
+    @media (max-width: 700px) {
+      .realtime-table {
+        width: 100vw;
+        font-size: 0.93em;
+      }
+    }
+    @media (max-width: 500px) {
+      .realtime-table th, .realtime-table td {
+        padding: 7px 3.5vw;
+        font-size: 0.94em;
+      }
+      .realtime-table {
+        font-size: 0.93em;
+      }
+    }
     .modal-bg {
       display: none;
       position: fixed;
@@ -475,7 +529,10 @@
       3. At the end of the shift, enter the ending kilometers and press <b>Stop</b>.<br>
       4. The timer and total kilometers will be shown for the day.<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
+      <br>
+      <b>Shift Log Table (Realtime):</b>
     </div>
+    <div id="realtimeLogs"></div>
     <div class="modal-bg" id="modalBg">
       <div class="modal-content" id="modalContent">
         <button class="modal-close" id="modalClose" title="Close">&times;</button>
@@ -503,7 +560,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     // Your Google Apps Script Web App endpoint
-    const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxJfo1K5w1fCUoMCFID0Q959vRUkFCysERzcqYkyuLOiCAiwGS1ttDjeACQZp3ezFi-rg/exec";
+    const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxNbRF11s4SSQqkvCPRXhxPYo0Xzbztwk9x2iDQ1jApEEMorKAfcrcha60e1mPEItJu3A/exec";
   </script>
   <script>
     function pad2(n){return String(n).padStart(2,'0');}
@@ -536,6 +593,7 @@
     const modalClose = document.getElementById('modalClose');
     const modalDone = document.getElementById('modalDone');
     const modalDetails = document.getElementById('modalDetails');
+    const realtimeLogs = document.getElementById('realtimeLogs');
 
     function showModal(details) {
       modalDetails.innerHTML = details;
@@ -551,7 +609,6 @@
       if (e.target === modalBg) hideModal();
     };
 
-    // --- Driver management (local, for card adding/removing) ---
     addDriverBtn.onclick = () => {
       const name = newDriverName.value.trim();
       if (!name) return;
@@ -559,7 +616,6 @@
       if (drivers.includes(name)) return alert("Driver already exists.");
       drivers.push(name);
       setDrivers(drivers);
-      db.ref("driverNames/" + name).set({name: name});
       newDriverName.value = '';
       renderDrivers();
     };
@@ -570,36 +626,18 @@
       let drivers = getDrivers();
       drivers = drivers.filter(n => n !== name);
       setDrivers(drivers);
-      db.ref("driverNames/" + name).remove();
       delete driverState[name];
       renderDrivers();
     }
 
-    // --- Real-time driver list from Firebase ---
-    let firebaseDriverNames = [];
-    db.ref("driverNames").on("value", snap => {
-      const obj = snap.val() || {};
-      firebaseDriverNames = Object.values(obj).map(d=>d.name);
-      renderDrivers();
-    });
-
-    // --- Real-time driver shift times from Firebase ---
-    let firebaseShifts = {};
-    db.ref("shifts").on("value", snap => {
-      firebaseShifts = snap.val() || {};
-      renderDrivers();
-    });
-
-    // --- Render driver cards, using real-time values ---
     function renderDrivers() {
-      // Use the union of local and firebase driver names
-      const allNames = Array.from(new Set([...getDrivers(), ...firebaseDriverNames]));
+      const drivers = getDrivers();
       driverBoard.innerHTML = "";
-      if (!allNames.length) {
+      if (!drivers.length) {
         driverBoard.innerHTML = `<div style="color:#93c7e6; text-align:center;margin:1em 0;font-family:'Poppins',sans-serif;font-weight:600;">No drivers. Add some above.</div>`;
         return;
       }
-      allNames.forEach(name => {
+      drivers.forEach(name => {
         if (!driverState[name]) driverState[name] = {
           kmIn: "",
           kmOut: "",
@@ -631,7 +669,7 @@
         delBtn.onclick = () => removeDriver(name);
         headerRow.appendChild(nameEl);
         headerRow.appendChild(dateEl);
-        if (getDrivers().includes(name)) headerRow.appendChild(delBtn);
+        headerRow.appendChild(delBtn);
         card.appendChild(headerRow);
 
         const fieldsRow = document.createElement('div');
@@ -688,29 +726,13 @@
         }
         renderKmResult();
         card.appendChild(kmResult);
-
-        // Timer bar
         const timerBar = document.createElement('div');
         timerBar.className = 'driver-timer-bar';
         const timerDisplay = document.createElement('span');
         timerDisplay.className = 'driver-timer';
         timerDisplay.textContent = formatTime(s.timer);
         timerBar.appendChild(timerDisplay);
-
-        // --- Show real-time times if available from Firebase ---
-        const shift = firebaseShifts && firebaseShifts[name];
-        if (shift && shift.timeIn) {
-          const timeInSpan = document.createElement('span');
-          timeInSpan.innerHTML = `<i class="fas fa-sign-in-alt" style="color:#7ec5fd"></i> <span style="color:#7ec5fd">In:</span> ${shift.timeIn}`;
-          timerBar.appendChild(timeInSpan);
-        }
-        if (shift && shift.timeOut) {
-          const timeOutSpan = document.createElement('span');
-          timeOutSpan.innerHTML = `<i class="fas fa-sign-out-alt" style="color:#fdbbbb"></i> <span style="color:#fdbbbb">Out:</span> ${shift.timeOut}`;
-          timerBar.appendChild(timeOutSpan);
-        }
         card.appendChild(timerBar);
-
         const btns = document.createElement('div');
         btns.className = 'driver-btns';
         const startBtn = document.createElement('button');
@@ -731,8 +753,6 @@
             timerDisplay.textContent = formatTime(s.timer);
           }, 1000);
           card.classList.add('active');
-          // Save start time to Firebase for all users to see
-          db.ref("shifts/" + name).set({timeIn: formatTimeOnly(s.timeIn)});
         };
         btns.appendChild(startBtn);
         const stopBtn = document.createElement('button');
@@ -755,12 +775,7 @@
           timerDisplay.textContent = formatTime(s.timer);
           renderKmResult();
           card.classList.remove('active');
-          // Save end time to Firebase for all to see
-          db.ref("shifts/" + name).set({
-            timeIn: s.timeIn ? formatTimeOnly(s.timeIn) : "",
-            timeOut: s.timeOut ? formatTimeOnly(s.timeOut) : ""
-          });
-          // Save to Google Sheets
+          // Save to Firebase
           const log = {
             date: s.date,
             name: name,
@@ -771,6 +786,8 @@
             totalKm: (+s.kmOut - +s.kmIn).toString(),
             totalTime: formatTime(s.timer)
           };
+          db.ref("logs").push(log);
+          // Save to Google Sheets
           fetch(SHEETS_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -792,10 +809,41 @@
       });
     }
 
+    function showRealtimeTable(data) {
+      if(!data || Object.keys(data).length === 0){
+        realtimeLogs.innerHTML = "<div style='color:#bbb;text-align:center;margin:18px'>No logs yet.</div>";
+        return;
+      }
+      let arr = Object.values(data);
+      arr.sort((a, b) => {
+        if(a.date !== b.date) return b.date.localeCompare(a.date);
+        return (b.timeIn||"").localeCompare(a.timeIn||"");
+      });
+      let html = `<table class="realtime-table"><thead>
+      <tr><th>Date</th><th>Name</th><th>Time In</th><th>Time Out</th>
+      <th>Start Km</th><th>End Km</th><th>Total Km</th><th>Total Time</th></tr></thead><tbody>`;
+      for(const row of arr){
+        html += `<tr>
+          <td>${row.date||""}</td>
+          <td>${row.name||""}</td>
+          <td>${row.timeIn||""}</td>
+          <td>${row.timeOut||""}</td>
+          <td>${row.kmIn||""}</td>
+          <td>${row.kmOut||""}</td>
+          <td>${row.totalKm||""}</td>
+          <td>${row.totalTime||""}</td>
+        </tr>`;
+      }
+      html += "</tbody></table>";
+      realtimeLogs.innerHTML = html;
+    }
+    db.ref("logs").on("value", snap => {
+      showRealtimeTable(snap.val()||{});
+    });
+
     setInterval(() => {
       Array.from(driverBoard.children).forEach((card, i) => {
-        const allNames = Array.from(new Set([...getDrivers(), ...firebaseDriverNames]));
-        const name = allNames[i];
+        const name = getDrivers()[i];
         const s = driverState[name];
         if (!s) return;
         const btns = card.querySelectorAll('.driver-btns button');
