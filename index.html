@@ -397,28 +397,28 @@
       font-weight: 600;
     }
     @media (max-width: 900px) {
-      .realtime-table th, .realtime-table td {
-        padding: 8px 6px;
-        font-size: 0.99em;
+      .log-board {
+        grid-template-columns: 1fr 1fr;
+        padding: 0 8px;
+        gap: 14px;
       }
-      .realtime-table {
-        font-size: 0.98em;
+      .driver-card {
+        min-width: 95vw;
+        max-width: 98vw;
+        font-size: 0.97em;
       }
+      .realtime-table th, .realtime-table td { padding: 7px 3vw; font-size: 0.93em; }
+      .realtime-table { font-size: 0.93em; }
     }
-    @media (max-width: 700px) {
-      .realtime-table {
-        width: 100vw;
-        font-size: 0.93em;
-      }
+    @media (max-width: 600px) {
+      .log-board { grid-template-columns: 1fr; padding: 0 2px; gap:10px;}
+      .driver-card { min-width: 99vw; max-width: 99vw; font-size: 0.96em;}
+      .realtime-table th, .realtime-table td { padding: 6px 2vw; font-size: 0.90em;}
     }
-    @media (max-width: 500px) {
-      .realtime-table th, .realtime-table td {
-        padding: 7px 3.5vw;
-        font-size: 0.94em;
-      }
-      .realtime-table {
-        font-size: 0.93em;
-      }
+    @media (max-width: 450px) {
+      .driver-card-header, .driver-fields-row, .driver-btns, .driver-km-result, .driver-timer-bar {padding-left:4px;padding-right:4px;}
+      .driver-card { font-size: 0.93em;}
+      .realtime-table th, .realtime-table td { padding: 5px 1vw; font-size: 0.85em;}
     }
     .modal-bg {
       display: none;
@@ -503,6 +503,58 @@
       from { transform: scale(0.91); opacity: 0.3;}
       to   { transform: scale(1);    opacity: 1;}
     }
+    .report-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.8em;
+      margin: 16px 0 10px 0;
+      padding: 0 4vw;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      width: 98vw;
+    }
+    .report-bar button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-size: 0.97rem;
+      font-weight: 700;
+      padding: 7px 18px;
+      cursor: pointer;
+      transition: background 0.16s;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.22em;
+    }
+    .report-bar button.active,
+    .report-bar button:active {
+      background: var(--primary-hover);
+    }
+    .report-bar select {
+      font-size: 1em;
+      border-radius: 7px;
+      padding: 6px 12px;
+      background: #212a40;
+      color: #bbdefb;
+      border: 1px solid #384164;
+      font-family: inherit;
+      font-weight: 600;
+      outline: none;
+    }
+    #tableWrapper {
+      display: none;
+      width: 100vw;
+      max-width: 1200px;
+      margin: 0 auto 25px auto;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    #tableWrapper.active { display: flex!important; }
   </style>
 </head>
 <body>
@@ -522,6 +574,7 @@
       <button id="addDriverBtn"><i class="fas fa-plus"></i> Add</button>
     </div>
     <div class="log-board" id="driverBoard"></div>
+
     <div class="how-to-use" id="howToUse">
       <b>How to use:</b><br>
       1. Add each delivery driver's name at the top.<br>
@@ -530,9 +583,23 @@
       4. The timer and total kilometers will be shown for the day.<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
       <br>
-      <b>Shift Log Table (Realtime):</b>
+      <button id="showReportBtn" style="background:var(--primary);color:#fff;font-weight:700;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;margin-top:7px;">
+        <i class="fas fa-table"></i> Show Reports Table
+      </button>
     </div>
-    <div id="realtimeLogs"></div>
+
+    <div id="tableWrapper">
+      <div class="report-bar">
+        <button id="dailyBtn" class="active">Daily</button>
+        <button id="weeklyBtn">Weekly</button>
+        <button id="monthlyBtn">Monthly</button>
+        <label style="color:#bbdefb;">Driver:</label>
+        <select id="driverFilter"></select>
+        <button id="closeTableBtn"><i class="fas fa-times"></i> Close Table</button>
+      </div>
+      <div id="reportLogs"></div>
+    </div>
+
     <div class="modal-bg" id="modalBg">
       <div class="modal-content" id="modalContent">
         <button class="modal-close" id="modalClose" title="Close">&times;</button>
@@ -559,8 +626,6 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    // Your Google Apps Script Web App endpoint
-    const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxNbRF11s4SSQqkvCPRXhxPYo0Xzbztwk9x2iDQ1jApEEMorKAfcrcha60e1mPEItJu3A/exec";
   </script>
   <script>
     function pad2(n){return String(n).padStart(2,'0');}
@@ -593,8 +658,6 @@
     const modalClose = document.getElementById('modalClose');
     const modalDone = document.getElementById('modalDone');
     const modalDetails = document.getElementById('modalDetails');
-    const realtimeLogs = document.getElementById('realtimeLogs');
-
     function showModal(details) {
       modalDetails.innerHTML = details;
       modalBg.classList.add('active');
@@ -787,12 +850,6 @@
             totalTime: formatTime(s.timer)
           };
           db.ref("logs").push(log);
-          // Save to Google Sheets
-          fetch(SHEETS_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(log)
-          });
           showModal(
             `<b><i class="fas fa-user"></i> ${name}</b><br>
             <span style="color:#fff;">${s.date}</span><br>
@@ -808,38 +865,6 @@
         driverBoard.appendChild(card);
       });
     }
-
-    function showRealtimeTable(data) {
-      if(!data || Object.keys(data).length === 0){
-        realtimeLogs.innerHTML = "<div style='color:#bbb;text-align:center;margin:18px'>No logs yet.</div>";
-        return;
-      }
-      let arr = Object.values(data);
-      arr.sort((a, b) => {
-        if(a.date !== b.date) return b.date.localeCompare(a.date);
-        return (b.timeIn||"").localeCompare(a.timeIn||"");
-      });
-      let html = `<table class="realtime-table"><thead>
-      <tr><th>Date</th><th>Name</th><th>Time In</th><th>Time Out</th>
-      <th>Start Km</th><th>End Km</th><th>Total Km</th><th>Total Time</th></tr></thead><tbody>`;
-      for(const row of arr){
-        html += `<tr>
-          <td>${row.date||""}</td>
-          <td>${row.name||""}</td>
-          <td>${row.timeIn||""}</td>
-          <td>${row.timeOut||""}</td>
-          <td>${row.kmIn||""}</td>
-          <td>${row.kmOut||""}</td>
-          <td>${row.totalKm||""}</td>
-          <td>${row.totalTime||""}</td>
-        </tr>`;
-      }
-      html += "</tbody></table>";
-      realtimeLogs.innerHTML = html;
-    }
-    db.ref("logs").on("value", snap => {
-      showRealtimeTable(snap.val()||{});
-    });
 
     setInterval(() => {
       Array.from(driverBoard.children).forEach((card, i) => {
@@ -866,6 +891,119 @@
       });
     }, 350);
     renderDrivers();
+
+    // --- BEGIN REPORT TABLE CODE ---
+    let allLogs = {};
+    db.ref("logs").on("value", snap => {
+      allLogs = snap.val()||{};
+      updateReportTable();
+      updateDriverFilterOptions();
+    });
+
+    const showReportBtn = document.getElementById('showReportBtn');
+    const tableWrapper = document.getElementById('tableWrapper');
+    const reportLogs = document.getElementById('reportLogs');
+    const dailyBtn = document.getElementById('dailyBtn');
+    const weeklyBtn = document.getElementById('weeklyBtn');
+    const monthlyBtn = document.getElementById('monthlyBtn');
+    const driverFilter = document.getElementById('driverFilter');
+    const closeTableBtn = document.getElementById('closeTableBtn');
+
+    let reportPeriod = "daily";
+    let reportDriver = "All";
+
+    function updateDriverFilterOptions() {
+      const names = new Set();
+      Object.values(allLogs).forEach(row => { if(row.name) names.add(row.name); });
+      const opts = ['All', ...Array.from(names).sort()];
+      driverFilter.innerHTML = opts.map(n => `<option value="${n}">${n}</option>`).join('');
+      if (!opts.includes(reportDriver)) reportDriver = "All";
+      driverFilter.value = reportDriver;
+    }
+
+    function filterLogs() {
+      const arr = Object.values(allLogs||{});
+      if (!arr.length) return [];
+      let filtered = arr;
+      if (reportDriver !== "All") filtered = filtered.filter(row => row.name === reportDriver);
+      const now = new Date();
+      if (reportPeriod === "daily") {
+        const today = now.toISOString().slice(0,10);
+        filtered = filtered.filter(row => row.date === today);
+      } else if (reportPeriod === "weekly") {
+        function getWeek(d) {
+          d = new Date(d);
+          d.setHours(0,0,0,0);
+          d.setDate(d.getDate() + 4 - (d.getDay()||7));
+          const yearStart = new Date(d.getFullYear(),0,1);
+          return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+        }
+        const thisYear = now.getFullYear();
+        const thisWeek = getWeek(now);
+        filtered = filtered.filter(row => {
+          if (!row.date) return false;
+          const d = new Date(row.date);
+          return d.getFullYear() === thisYear && getWeek(d) === thisWeek;
+        });
+      } else if (reportPeriod === "monthly") {
+        const thisMonth = now.toISOString().slice(0,7);
+        filtered = filtered.filter(row => (row.date||"").slice(0,7) === thisMonth);
+      }
+      filtered.sort((a, b) => {
+        if(a.date !== b.date) return b.date.localeCompare(a.date);
+        return (a.name||"").localeCompare(b.name||"");
+      });
+      return filtered;
+    }
+
+    function updateReportTable() {
+      if (!tableWrapper.classList.contains('active')) return;
+      const arr = filterLogs();
+      if (!arr.length) {
+        reportLogs.innerHTML = "<div style='color:#bbb;text-align:center;margin:18px'>No logs found for this period.</div>";
+        return;
+      }
+      let html = `<table class="realtime-table"><thead>
+        <tr><th>Date</th><th>Name</th><th>Start Km</th><th>End Km</th><th>Total Km</th><th>Total Time</th></tr>
+      </thead><tbody>`;
+      for(const row of arr){
+        html += `<tr>
+          <td>${row.date||""}</td>
+          <td>${row.name||""}</td>
+          <td>${row.kmIn||""}</td>
+          <td>${row.kmOut||""}</td>
+          <td>${row.totalKm||""}</td>
+          <td>${row.totalTime||""}</td>
+        </tr>`;
+      }
+      html += "</tbody></table>";
+      reportLogs.innerHTML = html;
+    }
+
+    function setPeriod(period) {
+      reportPeriod = period;
+      dailyBtn.classList.toggle('active', period==='daily');
+      weeklyBtn.classList.toggle('active', period==='weekly');
+      monthlyBtn.classList.toggle('active', period==='monthly');
+      updateReportTable();
+    }
+
+    dailyBtn.onclick = () => setPeriod('daily');
+    weeklyBtn.onclick = () => setPeriod('weekly');
+    monthlyBtn.onclick = () => setPeriod('monthly');
+    driverFilter.onchange = e => {
+      reportDriver = driverFilter.value;
+      updateReportTable();
+    };
+    showReportBtn.onclick = () => {
+      tableWrapper.classList.add('active');
+      updateReportTable();
+      updateDriverFilterOptions();
+      window.scrollTo(0, tableWrapper.offsetTop-30);
+    };
+    closeTableBtn.onclick = () => {
+      tableWrapper.classList.remove('active');
+    };
   </script>
 </body>
 </html>
