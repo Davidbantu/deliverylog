@@ -17,8 +17,6 @@
       --red: #ff3b30;
       --gap: 24px;
       --card-radius: 15px;
-      --max-width: 100vw;
-      --min-side-space: 0px;
     }
     html, body {
       min-height: 100vh;
@@ -368,131 +366,59 @@
       overflow-x: hidden;
       align-self: center;
     }
-    @media (max-width: 1400px) {
-      .log-board {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .realtime-table {
+      width: 98%;
+      max-width: 1200px;
+      margin: 24px auto 15px auto;
+      border-collapse: collapse;
+      background: #1b2438;
+      border-radius: 14px;
+      box-shadow: 0 2px 14px #0a2a5a22;
+      overflow-x: auto;
+    }
+    .realtime-table th, .realtime-table td {
+      padding: 9px 17px;
+      border-bottom: 1px solid #314264;
+      font-size: 1em;
+      font-family: 'Poppins', Arial, sans-serif;
+    }
+    .realtime-table th {
+      background: #17305c;
+      color: #bbdefb;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      border-top: none;
+    }
+    .realtime-table tr:last-child td {
+      border-bottom: none;
+    }
+    .realtime-table td {
+      color: #e3f3ff;
+      font-weight: 600;
     }
     @media (max-width: 900px) {
-      .log-board {
-        grid-template-columns: 1fr;
-        padding: 0 2vw;
+      .realtime-table th, .realtime-table td {
+        padding: 8px 6px;
+        font-size: 0.99em;
       }
-      .driver-card {
-        min-width: 0;
-        max-width: 97vw;
+      .realtime-table {
+        font-size: 0.98em;
       }
     }
     @media (max-width: 700px) {
-      .page-wrapper { max-width: 100vw; padding: 0 3vw 20px 2.5vw;}
-      .header { padding: 13px 4vw 10px 4vw;}
-      .driver-addbar, .log-board, .how-to-use { padding-left: 0; padding-right: 0;}
-      .how-to-use { padding: 11px 2vw 7px 2vw; width: calc(100vw - 8vw);}
-      .log-board { max-width: 99vw; grid-template-columns: 1fr;}
-    }
-    @media (max-width: 480px) {
-      .header-row { flex-direction: column; gap: 4px;}
-      .header-title { font-size: 1em;}
-      .header-desc { font-size:0.94em; margin-left:0; margin-top:2px; max-width:96vw;}
-      .log-board { gap: 10px;}
-      .page-wrapper { padding-right: 3vw; padding-left: 2vw;}
-      .driver-card { padding: 0;}
-      .how-to-use { font-size: 0.94em; padding: 10px 4vw 8px 4vw; width: calc(100vw - 9vw);}
-      .driver-fields-row input[type="number"] { width: 4em; font-size: 1em;}
+      .realtime-table {
+        width: 100vw;
+        font-size: 0.93em;
+      }
     }
     @media (max-width: 500px) {
-      .driver-card {
-        max-width: 97vw;
-        min-width: 0;
-        margin-right: 2vw;
-        margin-left: 0;
+      .realtime-table th, .realtime-table td {
+        padding: 7px 3.5vw;
+        font-size: 0.94em;
       }
-      .log-board {
-        padding-right: 0.5vw;
+      .realtime-table {
+        font-size: 0.93em;
       }
-    }
-    .modal-bg {
-      display: none;
-      position: fixed;
-      z-index: 500;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(13, 32, 70, 0.82);
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-bg.active {
-      display: flex;
-    }
-    .modal-content {
-      background: var(--card-bg);
-      color: var(--accent);
-      border-radius: 18px;
-      border: 2px solid var(--primary);
-      box-shadow: 0 7px 32px #42a5f547;
-      padding: 28px 30px 22px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 270px;
-      max-width: 95vw;
-      min-height: 135px;
-      font-family: 'Poppins', Arial, sans-serif;
-      animation: pop .18s cubic-bezier(.45,1.4,.68,1.02);
-      position: relative;
-    }
-    .modal-title {
-      font-size: 1.12em;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 9px;
-      text-align: center;
-      letter-spacing: 0.02em;
-    }
-    .modal-details {
-      margin-bottom: 16px;
-      color: var(--accent);
-      font-size: 1em;
-      font-weight: 500;
-      text-align: center;
-      word-break: break-word;
-    }
-    .modal-done-btn {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.01em;
-      font-weight: 700;
-      padding: 10px 34px;
-      cursor: pointer;
-      transition: background 0.18s;
-      margin-top: 2px;
-      font-family: inherit;
-      box-shadow: 0 2px 8px #42a5f533;
-      letter-spacing: 0.03em;
-    }
-    .modal-done-btn:hover {
-      background: var(--primary-hover);
-    }
-    .modal-close {
-      position: absolute;
-      top: 11px; right: 16px;
-      background: none;
-      border: none;
-      color: #bbdefb;
-      font-size: 1.22em;
-      cursor: pointer;
-      padding: 0;
-      border-radius: 50%;
-      transition: background 0.12s;
-    }
-    .modal-close:active {
-      background: #212a40;
-    }
-    @keyframes pop {
-      from { transform: scale(0.91); opacity: 0.3;}
-      to   { transform: scale(1);    opacity: 1;}
     }
   </style>
 </head>
@@ -520,7 +446,10 @@
       3. At the end of the shift, enter the ending kilometers and press <b>Stop</b>.<br>
       4. The timer and total kilometers will be shown for the day.<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
+      <br>
+      <b>Shift Log Table (Realtime):</b>
     </div>
+    <div id="realtimeLogs"></div>
     <div class="modal-bg" id="modalBg">
       <div class="modal-content" id="modalContent">
         <button class="modal-close" id="modalClose" title="Close">&times;</button>
@@ -531,7 +460,10 @@
     </div>
   </div>
   <script>
+    // CHANGE THIS TO YOUR DEPLOYED APPS SCRIPT WEB APP URL
+    // (It must return JSON of all rows for GET, and accept POST as shown)
     const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxNbRF11s4SSQqkvCPRXhxPYo0Xzbztwk9x2iDQ1jApEEMorKAfcrcha60e1mPEItJu3A/exec";
+
     const DRIVERS_KEY = 'tandoorivillaDrivers_v1';
     function getDrivers() {
       try {
@@ -543,6 +475,12 @@
       localStorage.setItem(DRIVERS_KEY, JSON.stringify(drivers));
     }
     let driverState = {};
+    function pad2(n){return String(n).padStart(2,'0');}
+    function formatTimeOnly(d) {
+      if(!d) return "";
+      if(typeof d === "string") d = new Date(d);
+      return pad2(d.getHours())+":"+pad2(d.getMinutes())+":"+pad2(d.getSeconds());
+    }
     function formatTime(sec) {
       const h = String(Math.floor(sec/3600)).padStart(2,0);
       const m = String(Math.floor((sec%3600)/60)).padStart(2,0);
@@ -556,6 +494,8 @@
     const modalClose = document.getElementById('modalClose');
     const modalDone = document.getElementById('modalDone');
     const modalDetails = document.getElementById('modalDetails');
+    // Realtime logs
+    const realtimeLogs = document.getElementById('realtimeLogs');
 
     function showModal(details) {
       modalDetails.innerHTML = details;
@@ -591,6 +531,7 @@
       delete driverState[name];
       renderDrivers();
     }
+
     function renderDrivers() {
       const drivers = getDrivers();
       driverBoard.innerHTML = "";
@@ -606,6 +547,8 @@
           running: false,
           timerInterval: null,
           startTime: null,
+          timeIn: null,
+          timeOut: null,
           date: (new Date()).toISOString().slice(0,10)
         };
         const s = driverState[name];
@@ -701,6 +644,7 @@
         startBtn.onclick = () => {
           s.running = true;
           s.startTime = new Date();
+          s.timeIn = new Date();
           s.timer = 0;
           startBtn.disabled = true;
           stopBtn.disabled = false;
@@ -726,6 +670,7 @@
           s.running = false;
           if (s.timerInterval) clearInterval(s.timerInterval);
           s.timerInterval = null;
+          s.timeOut = new Date();
           startBtn.disabled = false;
           stopBtn.disabled = true;
           kmIn.disabled = false;
@@ -739,6 +684,7 @@
             <span style="color:var(--primary)">Total: ${+s.kmOut - +s.kmIn} km</span><br>
             <span>Time: ${formatTime(s.timer)}</span>`
           );
+          // ---- SEND TO GOOGLE SHEETS ----
           if (SHEETS_URL && SHEETS_URL.startsWith('https://')) {
             fetch(SHEETS_URL, {
               method: "POST",
@@ -746,14 +692,19 @@
               body: JSON.stringify({
                 name: name,
                 date: s.date,
-                shiftTime: formatTime(s.timer),
+                timeIn: s.timeIn ? formatTimeOnly(s.timeIn) : "",
+                timeOut: s.timeOut ? formatTimeOnly(s.timeOut) : "",
                 kmIn: s.kmIn,
                 kmOut: s.kmOut,
-                totalKm: +s.kmOut - +s.kmIn
+                totalKm: +s.kmOut - +s.kmIn,
+                totalTime: formatTime(s.timer)
               })
-            }).then(r => r.text()).then(console.log).catch(console.error);
+            }).then(r => r.text()).then(() => {
+              setTimeout(fetchRealtimeLogs, 800); // update table after small delay
+            }).catch(console.error);
           }
-          s.kmIn = ""; s.kmOut = ""; s.timer = 0; s.startTime = null;
+          // Reset...
+          s.kmIn = ""; s.kmOut = ""; s.timer = 0; s.startTime = null; s.timeIn = null; s.timeOut = null;
           timerDisplay.textContent = formatTime(0);
           renderDrivers();
         };
@@ -762,6 +713,44 @@
         driverBoard.appendChild(card);
       });
     }
+
+    // ---- REALTIME TABLE ----
+    function fetchRealtimeLogs() {
+      // GET all rows as JSON array of objects
+      fetch(SHEETS_URL)
+      .then(r=>r.json())
+      .then(showRealtimeTable)
+      .catch(()=>{realtimeLogs.innerHTML="<div style='color:#e66;margin:18px'>Could not load log data.</div>";});
+    }
+    function showRealtimeTable(data) {
+      // Data: array of {date,name,timeIn,timeOut,kmIn,kmOut,totalKm,totalTime}
+      // If Apps Script returns {data: [...]}, use data = data.data;
+      if (data && data.data) data = data.data;
+      if(!Array.isArray(data) || !data.length){
+        realtimeLogs.innerHTML = "<div style='color:#bbb;text-align:center;margin:18px'>No logs yet.</div>";
+        return;
+      }
+      let html = `<table class="realtime-table"><thead>
+      <tr><th>Date</th><th>Name</th><th>Time In</th><th>Time Out</th>
+      <th>Start Km</th><th>End Km</th><th>Total Km</th><th>Total Time</th></tr></thead><tbody>`;
+      for(const row of data){
+        html += `<tr>
+          <td>${row.date||""}</td>
+          <td>${row.name||""}</td>
+          <td>${row.timeIn||""}</td>
+          <td>${row.timeOut||""}</td>
+          <td>${row.kmIn||""}</td>
+          <td>${row.kmOut||""}</td>
+          <td>${row.totalKm||""}</td>
+          <td>${row.totalTime||""}</td>
+        </tr>`;
+      }
+      html += "</tbody></table>";
+      realtimeLogs.innerHTML = html;
+    }
+    setInterval(fetchRealtimeLogs, 3500); // poll every 3.5s for live updates
+    fetchRealtimeLogs();
+
     setInterval(() => {
       Array.from(driverBoard.children).forEach((card, i) => {
         const name = getDrivers()[i];
