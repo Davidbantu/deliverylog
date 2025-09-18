@@ -4,7 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Delivery Drivers Log – Ravintola Tandoori Villa</title>
-  <!-- Poppins font and FontAwesome for icons -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
   <style>
@@ -156,7 +155,6 @@
       padding: 0 24px;
       box-sizing: border-box;
       justify-items: center;
-      /* Remove scroll bar if any */
       overflow-x: hidden;
     }
     .driver-card {
@@ -241,25 +239,47 @@
       font-size: 1em;
       font-weight: 600;
       color: #bbdefb;
-      margin-right: 0.07em;
+      margin-right: 0.14em;
       font-family: inherit;
-      white-space: nowrap; /* Prevent wrap */
+      white-space: nowrap;
     }
-    .driver-fields-row input[type="number"] {
-      width: 8em;
-      font-size: 1.1em;
-      padding: 0.48em 1.1em;
-      background: #212a40;
-      border: none;
+    .input-km-wrap {
+      display: inline-flex;
+      align-items: center;
       border-radius: 7px;
+      background: #212a40;
+      box-shadow: 0 1px 4px #009de018;
+      margin: 0 0.15em;
+      padding-left: 0.15em;
+      padding-right: 0.2em;
+    }
+    .input-km-wrap input[type="number"] {
+      width: 4.5em;
+      font-size: 1.07em;
+      padding: 0.42em 0.12em 0.42em 0.55em;
+      background: #212a40;
+      border: 1px solid #384164;
+      border-radius: 7px 0 0 7px;
       color: #fff;
       outline: none;
       text-align: center;
       font-family: inherit;
       font-weight: 700;
-      box-shadow: 0 1px 4px #009de018;
-      margin-right: 0.1em;
-      white-space: nowrap; /* Prevent wrap */
+      white-space: nowrap;
+      box-shadow: none;
+    }
+    .input-km-wrap .km-unit {
+      font-size: 0.98em;
+      color: #7ec5fd;
+      margin-left: 0.2em;
+      margin-right: 0.3em;
+      font-weight: 700;
+      white-space: nowrap;
+      background: transparent;
+      border: none;
+      padding: 0;
+      pointer-events: none;
+      user-select: none;
     }
     .driver-km-result {
       margin: 0 0 2px 0;
@@ -345,10 +365,9 @@
       letter-spacing: 0.01em;
       box-shadow: 0 2px 8px #212a4033;
       box-sizing: border-box;
-      overflow-x: hidden; /* Remove right scroll symbol */
+      overflow-x: hidden;
       align-self: center;
     }
-
     @media (max-width: 1400px) {
       .log-board {
         grid-template-columns: repeat(2, 1fr);
@@ -379,9 +398,8 @@
       .page-wrapper { padding-right: 3vw; padding-left: 2vw;}
       .driver-card { padding: 0;}
       .how-to-use { font-size: 0.94em; padding: 10px 4vw 8px 4vw; width: calc(100vw - 9vw);}
-      .driver-fields-row input[type="number"] { width: 7em; font-size: 1em;}
+      .driver-fields-row input[type="number"] { width: 4em; font-size: 1em;}
     }
-    /* Prevent horizontal overflow on mobile, cards always fit */
     @media (max-width: 500px) {
       .driver-card {
         max-width: 97vw;
@@ -393,7 +411,6 @@
         padding-right: 0.5vw;
       }
     }
-    /* Popup styles */
     .modal-bg {
       display: none;
       position: fixed;
@@ -481,7 +498,6 @@
 </head>
 <body>
   <div class="page-wrapper">
-    <!-- HEADER -->
     <div class="header">
       <div class="header-row">
         <span class="header-title">
@@ -505,7 +521,6 @@
       4. The timer and total kilometers will be shown for the day.<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
     </div>
-    <!-- Popup Modal -->
     <div class="modal-bg" id="modalBg">
       <div class="modal-content" id="modalContent">
         <button class="modal-close" id="modalClose" title="Close">&times;</button>
@@ -516,10 +531,7 @@
     </div>
   </div>
   <script>
-    // ---- SET THIS TO YOUR APPS SCRIPT WEB APP URL ----
     const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxNbRF11s4SSQqkvCPRXhxPYo0Xzbztwk9x2iDQ1jApEEMorKAfcrcha60e1mPEItJu3A/exec";
-    // --------------------------------------------------
-
     const DRIVERS_KEY = 'tandoorivillaDrivers_v1';
     function getDrivers() {
       try {
@@ -540,7 +552,6 @@
     const newDriverName = document.getElementById('newDriverName');
     const addDriverBtn = document.getElementById('addDriverBtn');
     const driverBoard = document.getElementById('driverBoard');
-    // Modal
     const modalBg = document.getElementById('modalBg');
     const modalClose = document.getElementById('modalClose');
     const modalDone = document.getElementById('modalDone');
@@ -560,7 +571,6 @@
       if (e.target === modalBg) hideModal();
     };
 
-    // Add driver
     addDriverBtn.onclick = () => {
       const name = newDriverName.value.trim();
       if (!name) return;
@@ -581,7 +591,6 @@
       delete driverState[name];
       renderDrivers();
     }
-    // Render all driver cards
     function renderDrivers() {
       const drivers = getDrivers();
       driverBoard.innerHTML = "";
@@ -621,29 +630,53 @@
         headerRow.appendChild(dateEl);
         headerRow.appendChild(delBtn);
         card.appendChild(headerRow);
+
+        // Start/End fields, with "Km" inside cell
         const fieldsRow = document.createElement('div');
         fieldsRow.className = 'driver-fields-row';
+
+        // In
         const kmInLbl = document.createElement('label');
         kmInLbl.textContent = "In";
+        const kmInWrap = document.createElement('span');
+        kmInWrap.className = 'input-km-wrap';
         const kmIn = document.createElement('input');
         kmIn.type = 'number';
         kmIn.placeholder = 'Start';
         kmIn.value = s.kmIn;
         kmIn.disabled = s.running;
         kmIn.oninput = e => { s.kmIn = e.target.value; renderKmResult(); };
+        const kmInUnit = document.createElement('span');
+        kmInUnit.className = 'km-unit';
+        kmInUnit.textContent = "Km";
+        kmInWrap.appendChild(kmIn);
+        kmInWrap.appendChild(kmInUnit);
+
         fieldsRow.appendChild(kmInLbl);
-        fieldsRow.appendChild(kmIn);
+        fieldsRow.appendChild(kmInWrap);
+
+        // Out
         const kmOutLbl = document.createElement('label');
         kmOutLbl.textContent = "Out";
+        const kmOutWrap = document.createElement('span');
+        kmOutWrap.className = 'input-km-wrap';
         const kmOut = document.createElement('input');
         kmOut.type = 'number';
         kmOut.placeholder = 'End';
         kmOut.value = s.kmOut;
         kmOut.disabled = !s.running;
         kmOut.oninput = e => { s.kmOut = e.target.value; renderKmResult(); };
+        const kmOutUnit = document.createElement('span');
+        kmOutUnit.className = 'km-unit';
+        kmOutUnit.textContent = "Km";
+        kmOutWrap.appendChild(kmOut);
+        kmOutWrap.appendChild(kmOutUnit);
+
         fieldsRow.appendChild(kmOutLbl);
-        fieldsRow.appendChild(kmOut);
+        fieldsRow.appendChild(kmOutWrap);
+
         card.appendChild(fieldsRow);
+
         const kmResult = document.createElement('div');
         kmResult.className = 'driver-km-result';
         function renderKmResult() {
@@ -700,14 +733,12 @@
           timerDisplay.textContent = formatTime(s.timer);
           renderKmResult();
           card.classList.remove('active');
-          // ---- Show popup modal ----
           showModal(
             `<b><i class="fas fa-user"></i> ${name}</b><br>
             <span style="color:#fff;">${s.date}</span><br>
             <span style="color:var(--primary)">Total: ${+s.kmOut - +s.kmIn} km</span><br>
             <span>Time: ${formatTime(s.timer)}</span>`
           );
-          // ---- SEND TO GOOGLE SHEETS ----
           if (SHEETS_URL && SHEETS_URL.startsWith('https://')) {
             fetch(SHEETS_URL, {
               method: "POST",
@@ -722,7 +753,6 @@
               })
             }).then(r => r.text()).then(console.log).catch(console.error);
           }
-          // Reset...
           s.kmIn = ""; s.kmOut = ""; s.timer = 0; s.startTime = null;
           timerDisplay.textContent = formatTime(0);
           renderDrivers();
@@ -738,8 +768,8 @@
         const s = driverState[name];
         if (!s) return;
         const btns = card.querySelectorAll('.driver-btns button');
-        const kmIn = card.querySelector('.driver-fields-row input[type="number"]:nth-child(2)');
-        const kmOut = card.querySelector('.driver-fields-row input[type="number"]:nth-child(4)');
+        const kmIn = card.querySelector('.driver-fields-row .input-km-wrap input[type="number"]:nth-child(1)');
+        const kmOut = card.querySelectorAll('.driver-fields-row .input-km-wrap input[type="number"]')[1];
         if (btns.length === 2) {
           btns[0].disabled = s.running || !s.kmIn || !s.date;
           btns[1].disabled = !s.running || !s.kmOut;
