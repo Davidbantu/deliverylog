@@ -178,15 +178,16 @@
       box-shadow: 0 2px 12px #42a5f52a;
     }
     .driver-card-header {
+      width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: 12px 23px 8px 23px;
       background: #0d47a1;
       color: var(--accent);
       font-size: 1.07em;
       font-weight: 700;
-      gap: 8px;
+      gap: 14px;
       border-bottom: 1px solid var(--border);
       border-top-left-radius: var(--card-radius);
       border-top-right-radius: var(--card-radius);
@@ -195,24 +196,36 @@
       font-size: 1.08em;
       font-weight: 700;
       color: #fff;
-      flex: 1;
+      flex-shrink: 1;
+      flex-grow: 1;
+      min-width: 0;
       letter-spacing: 0.04em;
-      white-space: normal !important;
-      overflow: visible !important;
-      text-overflow: clip !important;
+      overflow-wrap: break-word;
       word-break: break-word;
+      white-space: normal;
+      display: inline-block;
+      margin-right: 10px;
     }
     .driver-card-header .driver-date {
       font-size: 0.97em;
       color: #d5f5ff;
       background: #183350;
       border-radius: 0.5em;
-      padding: 3px 12px;
+      padding: 3px 8px;
       border: none;
       outline: none;
       font-family: inherit;
       font-weight: 600;
-      margin-left: 8px;
+      width: 120px;
+      min-width: 120px;
+      max-width: 150px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-right: 10px;
+    }
+    .driver-card-header .driver-date[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
     }
     .driver-card-header .driver-delete {
       color: var(--red);
@@ -220,10 +233,11 @@
       border: none;
       background: none;
       cursor: pointer;
-      margin-left: 7px;
+      margin-left: auto;
       border-radius: 50%;
       padding: 0.07em 0.36em;
       transition: background 0.11s;
+      flex-shrink: 0;
     }
     .driver-fields-row {
       display: flex;
@@ -414,6 +428,12 @@
       .log-board { grid-template-columns: 1fr; padding: 0 2px; gap:10px;}
       .driver-card { min-width: 99vw; max-width: 99vw; font-size: 0.96em;}
       .realtime-table th, .realtime-table td { padding: 6px 2vw; font-size: 0.90em;}
+      .driver-card-header .driver-date {
+        width: 130px;
+        min-width: 120px;
+        max-width: 140px;
+        font-size: 1.05em;
+      }
     }
     @media (max-width: 450px) {
       .driver-card-header, .driver-fields-row, .driver-btns, .driver-km-result, .driver-timer-bar {padding-left:4px;padding-right:4px;}
@@ -555,6 +575,75 @@
       flex-direction: column;
     }
     #tableWrapper.active { display: flex!important; }
+    .modal-confirm {
+      background: var(--card-bg);
+      color: var(--accent);
+      border-radius: 18px;
+      border: 2px solid var(--red);
+      box-shadow: 0 7px 32px #ff3b3047;
+      padding: 22px 24px 18px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 230px;
+      max-width: 95vw;
+      min-height: 80px;
+      font-family: 'Poppins', Arial, sans-serif;
+      position: relative;
+      animation: pop .18s cubic-bezier(.45,1.4,.68,1.02);
+    }
+    .modal-confirm-title {
+      font-size: 1.09em;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 9px;
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+    .modal-confirm-details {
+      margin-bottom: 16px;
+      color: var(--accent);
+      font-size: 1em;
+      font-weight: 500;
+      text-align: center;
+      word-break: break-word;
+    }
+    .modal-confirm-btns {
+      display: flex;
+      gap: 18px;
+      margin-top: 5px;
+    }
+    .modal-confirm-btn {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.01em;
+      font-weight: 700;
+      padding: 7px 22px;
+      cursor: pointer;
+      transition: background 0.18s;
+      font-family: inherit;
+      box-shadow: 0 2px 8px #ff3b3033;
+      letter-spacing: 0.03em;
+    }
+    .modal-confirm-btn:hover {
+      background: #c11;
+    }
+    .modal-cancel-btn {
+      background: var(--border);
+      color: #bbdefb;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.01em;
+      font-weight: 700;
+      padding: 7px 22px;
+      cursor: pointer;
+      transition: background 0.18s;
+      font-family: inherit;
+      box-shadow: 0 2px 8px #212a4033;
+      letter-spacing: 0.03em;
+    }
   </style>
 </head>
 <body>
@@ -608,12 +697,22 @@
         <button class="modal-done-btn" id="modalDone">Done</button>
       </div>
     </div>
+    <!-- Confirmation Modal for Delete -->
+    <div class="modal-bg" id="confirmModalBg">
+      <div class="modal-confirm" id="confirmModalContent">
+        <div class="modal-confirm-title"><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i> Confirm Delete</div>
+        <div class="modal-confirm-details" id="confirmModalDetails"></div>
+        <div class="modal-confirm-btns">
+          <button class="modal-confirm-btn" id="confirmDeleteBtn">Delete</button>
+          <button class="modal-cancel-btn" id="cancelDeleteBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script>
-    // Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCirYQ_46JiSkMIwCNs1nSi89dvB1MUg_A",
       authDomain: "deliverylog12.firebaseapp.com",
@@ -629,6 +728,14 @@
   </script>
   <script>
     function pad2(n){return String(n).padStart(2,'0');}
+    function toDisplayDate(isoStr) {
+      // Accepts YYYY-MM-DD, returns DD/MMM/YYYY
+      if (!isoStr) return '';
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const [y, m, d] = isoStr.split('-');
+      const mIndex = parseInt(m,10)-1;
+      return `${pad2(d)}/${months[mIndex]}/${y}`;
+    }
     function formatTimeOnly(d) {
       if(!d) return "";
       if(typeof d === "string") d = new Date(d);
@@ -640,17 +747,13 @@
       const s = String(sec%60).padStart(2,0);
       return `${h}:${m}:${s}`;
     }
-    const DRIVERS_KEY = 'tandoorivillaDrivers_v1';
-    function getDrivers() {
-      try {
-        const d = JSON.parse(localStorage.getItem(DRIVERS_KEY));
-        return Array.isArray(d) ? d : [];
-      } catch { return []; }
-    }
-    function setDrivers(drivers) {
-      localStorage.setItem(DRIVERS_KEY, JSON.stringify(drivers));
+    function toISODate(dateStr) {
+      // Accepts DD/MM/YYYY, returns YYYY-MM-DD
+      const [d,m,y] = dateStr.split('/');
+      return `${y}-${pad2(m)}-${pad2(d)}`;
     }
     let driverState = {};
+    let drivers = {};
     const newDriverName = document.getElementById('newDriverName');
     const addDriverBtn = document.getElementById('addDriverBtn');
     const driverBoard = document.getElementById('driverBoard');
@@ -658,6 +761,12 @@
     const modalClose = document.getElementById('modalClose');
     const modalDone = document.getElementById('modalDone');
     const modalDetails = document.getElementById('modalDetails');
+    const confirmModalBg = document.getElementById('confirmModalBg');
+    const confirmModalDetails = document.getElementById('confirmModalDetails');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    let pendingDeleteDriverId = null;
+
     function showModal(details) {
       modalDetails.innerHTML = details;
       modalBg.classList.add('active');
@@ -671,37 +780,54 @@
     modalBg.onclick = function(e) {
       if (e.target === modalBg) hideModal();
     };
-
+    function showConfirmModal(driverId, driverName) {
+      confirmModalDetails.innerHTML = `Are you sure you want to delete <b>${driverName}</b>? This cannot be undone.`;
+      confirmModalBg.classList.add('active');
+      pendingDeleteDriverId = driverId;
+      setTimeout(() => { confirmDeleteBtn.focus(); }, 100);
+    }
+    function hideConfirmModal() {
+      confirmModalBg.classList.remove('active');
+      pendingDeleteDriverId = null;
+    }
+    cancelDeleteBtn.onclick = hideConfirmModal;
+    confirmModalBg.onclick = function(e) {
+      if (e.target === confirmModalBg) hideConfirmModal();
+    };
+    confirmDeleteBtn.onclick = function() {
+      if (pendingDeleteDriverId) {
+        db.ref("drivers/" + pendingDeleteDriverId).remove();
+        hideConfirmModal();
+      }
+    };
     addDriverBtn.onclick = () => {
       const name = newDriverName.value.trim();
       if (!name) return;
-      let drivers = getDrivers();
-      if (drivers.includes(name)) return alert("Driver already exists.");
-      drivers.push(name);
-      setDrivers(drivers);
+      const exists = Object.values(drivers).some(d => d.name.toLowerCase() === name.toLowerCase());
+      if (exists) return alert("Driver already exists.");
+      const id = db.ref("drivers").push().key;
+      db.ref("drivers/" + id).set({
+        name,
+        date: new Date().toISOString().slice(0,10)
+      });
       newDriverName.value = '';
-      renderDrivers();
     };
     newDriverName.addEventListener("keypress", e => {
       if (e.key === "Enter") addDriverBtn.click();
     });
-    function removeDriver(name) {
-      let drivers = getDrivers();
-      drivers = drivers.filter(n => n !== name);
-      setDrivers(drivers);
-      delete driverState[name];
+    db.ref("drivers").on("value", snap => {
+      drivers = snap.val() || {};
       renderDrivers();
-    }
-
+    });
     function renderDrivers() {
-      const drivers = getDrivers();
       driverBoard.innerHTML = "";
-      if (!drivers.length) {
+      const driverArr = Object.entries(drivers);
+      if (!driverArr.length) {
         driverBoard.innerHTML = `<div style="color:#93c7e6; text-align:center;margin:1em 0;font-family:'Poppins',sans-serif;font-weight:600;">No drivers. Add some above.</div>`;
         return;
       }
-      drivers.forEach(name => {
-        if (!driverState[name]) driverState[name] = {
+      driverArr.forEach(([driverId, driverObj]) => {
+        if (!driverState[driverId]) driverState[driverId] = {
           kmIn: "",
           kmOut: "",
           timer: 0,
@@ -710,35 +836,47 @@
           startTime: null,
           timeIn: null,
           timeOut: null,
-          date: (new Date()).toISOString().slice(0,10)
+          date: driverObj.date || (new Date()).toISOString().slice(0,10)
         };
-        const s = driverState[name];
+        const s = driverState[driverId];
         const card = document.createElement('div');
         card.className = 'driver-card' + (s.running ? ' active' : '');
         const headerRow = document.createElement('div');
         headerRow.className = 'driver-card-header';
         const nameEl = document.createElement('span');
         nameEl.className = 'driver-name';
-        nameEl.textContent = name;
+        nameEl.textContent = driverObj.name;
         const dateEl = document.createElement('input');
         dateEl.type = 'date';
         dateEl.className = 'driver-date';
         dateEl.value = s.date;
-        dateEl.onchange = e => { s.date = e.target.value; renderDrivers(); };
+        dateEl.maxLength = 10;
+        dateEl.onchange = e => {
+          const val = e.target.value.trim();
+          if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
+            s.date = val;
+            renderDrivers();
+          } else {
+            e.target.value = s.date;
+          }
+        };
+        dateEl.onclick = function(e) { e.target.showPicker && e.target.showPicker(); };
+        dateEl.onblur = dateEl.onkeyup = function(e) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(dateEl.value)) {
+            dateEl.value = s.date;
+          }
+        };
         const delBtn = document.createElement('button');
         delBtn.className = 'driver-delete';
         delBtn.title = "Remove driver";
         delBtn.innerHTML = "<i class='fas fa-trash'></i>";
-        delBtn.onclick = () => removeDriver(name);
+        delBtn.onclick = () => showConfirmModal(driverId, driverObj.name);
         headerRow.appendChild(nameEl);
         headerRow.appendChild(dateEl);
         headerRow.appendChild(delBtn);
         card.appendChild(headerRow);
-
         const fieldsRow = document.createElement('div');
         fieldsRow.className = 'driver-fields-row';
-
-        // In
         const kmInLbl = document.createElement('label');
         kmInLbl.textContent = "In";
         const kmInWrap = document.createElement('span');
@@ -754,11 +892,8 @@
         kmInUnit.textContent = "Km";
         kmInWrap.appendChild(kmIn);
         kmInWrap.appendChild(kmInUnit);
-
         fieldsRow.appendChild(kmInLbl);
         fieldsRow.appendChild(kmInWrap);
-
-        // Out
         const kmOutLbl = document.createElement('label');
         kmOutLbl.textContent = "Out";
         const kmOutWrap = document.createElement('span');
@@ -774,12 +909,9 @@
         kmOutUnit.textContent = "Km";
         kmOutWrap.appendChild(kmOut);
         kmOutWrap.appendChild(kmOutUnit);
-
         fieldsRow.appendChild(kmOutLbl);
         fieldsRow.appendChild(kmOutWrap);
-
         card.appendChild(fieldsRow);
-
         const kmResult = document.createElement('div');
         kmResult.className = 'driver-km-result';
         function renderKmResult() {
@@ -838,10 +970,9 @@
           timerDisplay.textContent = formatTime(s.timer);
           renderKmResult();
           card.classList.remove('active');
-          // Save to Firebase
           const log = {
             date: s.date,
-            name: name,
+            name: driverObj.name,
             timeIn: s.timeIn ? formatTimeOnly(s.timeIn) : "",
             timeOut: s.timeOut ? formatTimeOnly(s.timeOut) : "",
             kmIn: s.kmIn,
@@ -851,8 +982,8 @@
           };
           db.ref("logs").push(log);
           showModal(
-            `<b><i class="fas fa-user"></i> ${name}</b><br>
-            <span style="color:#fff;">${s.date}</span><br>
+            `<b><i class="fas fa-user"></i> ${driverObj.name}</b><br>
+            <span style="color:#fff;">${toDisplayDate(s.date)}</span><br>
             <span style="color:var(--primary)">Total: ${+s.kmOut - +s.kmIn} km</span><br>
             <span>Time: ${formatTime(s.timer)}</span>`
           );
@@ -865,11 +996,10 @@
         driverBoard.appendChild(card);
       });
     }
-
     setInterval(() => {
       Array.from(driverBoard.children).forEach((card, i) => {
-        const name = getDrivers()[i];
-        const s = driverState[name];
+        const driverId = Object.keys(drivers)[i];
+        const s = driverState[driverId];
         if (!s) return;
         const btns = card.querySelectorAll('.driver-btns button');
         const kmIn = card.querySelector('.driver-fields-row .input-km-wrap input[type="number"]:nth-child(1)');
@@ -890,16 +1020,13 @@
         else card.classList.remove('active');
       });
     }, 350);
-    renderDrivers();
 
-    // --- BEGIN REPORT TABLE CODE ---
     let allLogs = {};
     db.ref("logs").on("value", snap => {
       allLogs = snap.val()||{};
       updateReportTable();
       updateDriverFilterOptions();
     });
-
     const showReportBtn = document.getElementById('showReportBtn');
     const tableWrapper = document.getElementById('tableWrapper');
     const reportLogs = document.getElementById('reportLogs');
@@ -908,10 +1035,8 @@
     const monthlyBtn = document.getElementById('monthlyBtn');
     const driverFilter = document.getElementById('driverFilter');
     const closeTableBtn = document.getElementById('closeTableBtn');
-
     let reportPeriod = "daily";
     let reportDriver = "All";
-
     function updateDriverFilterOptions() {
       const names = new Set();
       Object.values(allLogs).forEach(row => { if(row.name) names.add(row.name); });
@@ -920,7 +1045,6 @@
       if (!opts.includes(reportDriver)) reportDriver = "All";
       driverFilter.value = reportDriver;
     }
-
     function filterLogs() {
       const arr = Object.values(allLogs||{});
       if (!arr.length) return [];
@@ -955,7 +1079,6 @@
       });
       return filtered;
     }
-
     function updateReportTable() {
       if (!tableWrapper.classList.contains('active')) return;
       const arr = filterLogs();
@@ -968,7 +1091,7 @@
       </thead><tbody>`;
       for(const row of arr){
         html += `<tr>
-          <td>${row.date||""}</td>
+          <td>${toDisplayDate(row.date||"")}</td>
           <td>${row.name||""}</td>
           <td>${row.kmIn||""}</td>
           <td>${row.kmOut||""}</td>
@@ -979,7 +1102,6 @@
       html += "</tbody></table>";
       reportLogs.innerHTML = html;
     }
-
     function setPeriod(period) {
       reportPeriod = period;
       dailyBtn.classList.toggle('active', period==='daily');
@@ -987,7 +1109,6 @@
       monthlyBtn.classList.toggle('active', period==='monthly');
       updateReportTable();
     }
-
     dailyBtn.onclick = () => setPeriod('daily');
     weeklyBtn.onclick = () => setPeriod('weekly');
     monthlyBtn.onclick = () => setPeriod('monthly');
