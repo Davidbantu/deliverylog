@@ -245,19 +245,19 @@
     .driver-fields-row {
       display: flex;
       align-items: center;
-      gap: 1.2em;
+      gap: 0.7em;
       margin: 13px 0 3px 0;
       padding: 0 15px;
       justify-content: stretch;
     }
-    .driver-fields-row label {
-      font-size: 1em;
-      font-weight: 600;
-      color: #bbdefb;
-      margin-right: 0.14em;
-      font-family: inherit;
-      white-space: nowrap;
-    }
+   .driver-fields-row label {
+  font-size: 1em;
+  font-weight: 600;
+  color: #bbdefb;
+  
+  font-family: inherit;
+  white-space: nowrap;
+}
     .input-km-wrap {
       display: inline-flex;
       align-items: center;
@@ -269,7 +269,7 @@
       padding-right: 0.2em;
     }
     .input-km-wrap input[type="number"] {
-      width: 4.5em;
+      width: 5.5em;
       font-size: 1.07em;
       padding: 0.42em 0.12em 0.42em 0.55em;
       background: #212a40;
@@ -739,6 +739,16 @@
     const db = firebase.database();
   </script>
   <script>
+    // Helper for Finland time
+    function getFinlandDateISO() {
+      // Finland time is UTC+3 (EEST) in September
+      let d = new Date();
+      let finland = new Date(d.getTime() + (3 - d.getTimezoneOffset() / 60) * 60 * 60 * 1000);
+      let year = finland.getUTCFullYear();
+      let month = finland.getUTCMonth() + 1;
+      let day = finland.getUTCDate();
+      return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
     function pad2(n){return String(n).padStart(2,'0');}
     function toDisplayDate(isoStr) {
       // Accepts YYYY-MM-DD, returns DD/MMM/YYYY
@@ -764,8 +774,8 @@
       const [d,m,y] = dateStr.split('/');
       return `${y}-${pad2(m)}-${pad2(d)}`;
     }
-    let driverState = {};
     let drivers = {};
+    let driverStates = {};
     const newDriverName = document.getElementById('newDriverName');
     const addDriverBtn = document.getElementById('addDriverBtn');
     const driverBoard = document.getElementById('driverBoard');
@@ -809,28 +819,53 @@
     confirmDeleteBtn.onclick = function() {
       if (pendingDeleteDriverId) {
         db.ref("drivers/" + pendingDeleteDriverId).remove();
+        db.ref("states/" + pendingDeleteDriverId).remove();
         hideConfirmModal();
       }
     };
+
+    // Add driver (Firebase realtime)
     addDriverBtn.onclick = () => {
       const name = newDriverName.value.trim();
       if (!name) return;
+      // Check if driver exists (case insensitive)
       const exists = Object.values(drivers).some(d => d.name.toLowerCase() === name.toLowerCase());
       if (exists) return alert("Driver already exists.");
+      // Add to Firebase for realtime sync
       const id = db.ref("drivers").push().key;
       db.ref("drivers/" + id).set({
         name,
-        date: new Date().toISOString().slice(0,10)
+        date: getFinlandDateISO()
+      });
+      db.ref("states/" + id).set({
+        kmIn: "",
+        kmOut: "",
+        timer: 0,
+        running: false,
+        startTime: null,
+        timeIn: null,
+        timeOut: null,
+        date: getFinlandDateISO()
       });
       newDriverName.value = '';
     };
     newDriverName.addEventListener("keypress", e => {
       if (e.key === "Enter") addDriverBtn.click();
     });
+
+    // Listen for driver changes (Firebase realtime)
     db.ref("drivers").on("value", snap => {
       drivers = snap.val() || {};
       renderDrivers();
     });
+    db.ref("states").on("value", snap => {
+      driverStates = snap.val() || {};
+      renderDrivers();
+    });
+
+    // Each driver card updates its timer interval only if running
+    let timerIntervals = {};
+
     function renderDrivers() {
       driverBoard.innerHTML = "";
       const driverArr = Object.entries(drivers);
@@ -839,18 +874,31 @@
         return;
       }
       driverArr.forEach(([driverId, driverObj]) => {
-        if (!driverState[driverId]) driverState[driverId] = {
+        let s = driverStates[driverId] || {
           kmIn: "",
           kmOut: "",
           timer: 0,
           running: false,
-          timerInterval: null,
           startTime: null,
           timeIn: null,
           timeOut: null,
-          date: driverObj.date || (new Date()).toISOString().slice(0,10)
+          date: getFinlandDateISO()
         };
-        const s = driverState[driverId];
+        // If day changed, reset date in db
+        let todayFinland = getFinlandDateISO();
+        if (s.date !== todayFinland) {
+          s.date = todayFinland;
+          s.kmIn = "";
+          s.kmOut = "";
+          s.timer = 0;
+          s.running = false;
+          s.startTime = null;
+          s.timeIn = null;
+          s.timeOut = null;
+          db.ref("drivers/" + driverId + "/date").set(todayFinland);
+          db.ref("states/" + driverId).set(s);
+        }
+
         const card = document.createElement('div');
         card.className = 'driver-card' + (s.running ? ' active' : '');
         const headerRow = document.createElement('div');
@@ -858,6 +906,7 @@
         const nameEl = document.createElement('span');
         nameEl.className = 'driver-name';
         nameEl.textContent = driverObj.name;
+
         const dateEl = document.createElement('input');
         dateEl.type = 'date';
         dateEl.className = 'driver-date';
@@ -866,8 +915,8 @@
         dateEl.onchange = e => {
           const val = e.target.value.trim();
           if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-            s.date = val;
-            renderDrivers();
+            db.ref("drivers/" + driverId + "/date").set(val);
+            db.ref("states/" + driverId + "/date").set(val);
           } else {
             e.target.value = s.date;
           }
@@ -878,17 +927,22 @@
             dateEl.value = s.date;
           }
         };
+
         const delBtn = document.createElement('button');
         delBtn.className = 'driver-delete';
         delBtn.title = "Remove driver";
         delBtn.innerHTML = "<i class='fas fa-trash'></i>";
         delBtn.onclick = () => showConfirmModal(driverId, driverObj.name);
+
         headerRow.appendChild(nameEl);
         headerRow.appendChild(dateEl);
         headerRow.appendChild(delBtn);
         card.appendChild(headerRow);
+
         const fieldsRow = document.createElement('div');
         fieldsRow.className = 'driver-fields-row';
+
+        // In
         const kmInLbl = document.createElement('label');
         kmInLbl.textContent = "In";
         const kmInWrap = document.createElement('span');
@@ -898,14 +952,19 @@
         kmIn.placeholder = 'Start';
         kmIn.value = s.kmIn;
         kmIn.disabled = s.running;
-        kmIn.oninput = e => { s.kmIn = e.target.value; renderKmResult(); };
+        kmIn.oninput = e => {
+          db.ref("states/" + driverId + "/kmIn").set(e.target.value);
+        };
         const kmInUnit = document.createElement('span');
         kmInUnit.className = 'km-unit';
         kmInUnit.textContent = "Km";
         kmInWrap.appendChild(kmIn);
         kmInWrap.appendChild(kmInUnit);
+
         fieldsRow.appendChild(kmInLbl);
         fieldsRow.appendChild(kmInWrap);
+
+        // Out
         const kmOutLbl = document.createElement('label');
         kmOutLbl.textContent = "Out";
         const kmOutWrap = document.createElement('span');
@@ -915,24 +974,27 @@
         kmOut.placeholder = 'End';
         kmOut.value = s.kmOut;
         kmOut.disabled = !s.running;
-        kmOut.oninput = e => { s.kmOut = e.target.value; renderKmResult(); };
+        kmOut.oninput = e => {
+          db.ref("states/" + driverId + "/kmOut").set(e.target.value);
+        };
         const kmOutUnit = document.createElement('span');
         kmOutUnit.className = 'km-unit';
         kmOutUnit.textContent = "Km";
         kmOutWrap.appendChild(kmOut);
         kmOutWrap.appendChild(kmOutUnit);
+
         fieldsRow.appendChild(kmOutLbl);
         fieldsRow.appendChild(kmOutWrap);
+
         card.appendChild(fieldsRow);
+
         const kmResult = document.createElement('div');
         kmResult.className = 'driver-km-result';
-        function renderKmResult() {
-          if(s.kmIn && s.kmOut && !isNaN(+s.kmIn) && !isNaN(+s.kmOut) && +s.kmOut >= +s.kmIn) {
-            kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+s.kmOut - +s.kmIn) + ` km</span>`;
-          } else { kmResult.textContent = ''; }
-        }
-        renderKmResult();
+        if(s.kmIn && s.kmOut && !isNaN(+s.kmIn) && !isNaN(+s.kmOut) && +s.kmOut >= +s.kmIn) {
+          kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+s.kmOut - +s.kmIn) + ` km</span>`;
+        } else { kmResult.textContent = ''; }
         card.appendChild(kmResult);
+
         const timerBar = document.createElement('div');
         timerBar.className = 'driver-timer-bar';
         const timerDisplay = document.createElement('span');
@@ -940,28 +1002,23 @@
         timerDisplay.textContent = formatTime(s.timer);
         timerBar.appendChild(timerDisplay);
         card.appendChild(timerBar);
+
         const btns = document.createElement('div');
         btns.className = 'driver-btns';
         const startBtn = document.createElement('button');
         startBtn.innerHTML = `<i class="fas fa-play"></i> Start`;
         startBtn.disabled = s.running || !s.kmIn || !s.date;
         startBtn.onclick = () => {
-          s.running = true;
-          s.startTime = new Date();
-          s.timeIn = new Date();
-          s.timer = 0;
-          startBtn.disabled = true;
-          stopBtn.disabled = false;
-          kmIn.disabled = true;
-          kmOut.disabled = false;
-          timerDisplay.textContent = formatTime(s.timer);
-          s.timerInterval = setInterval(() => {
-            s.timer = Math.floor((new Date() - s.startTime)/1000);
-            timerDisplay.textContent = formatTime(s.timer);
-          }, 1000);
-          card.classList.add('active');
+          let now = Date.now();
+          db.ref("states/" + driverId).update({
+            running: true,
+            startTime: now,
+            timeIn: now,
+            timer: 0
+          });
         };
         btns.appendChild(startBtn);
+
         const stopBtn = document.createElement('button');
         stopBtn.innerHTML = `<i class="fas fa-stop"></i> Stop`;
         stopBtn.className = "stop-btn";
@@ -971,22 +1028,17 @@
             alert("Enter valid ending km (greater than or equal to start)");
             return;
           }
-          s.running = false;
-          if (s.timerInterval) clearInterval(s.timerInterval);
-          s.timerInterval = null;
-          s.timeOut = new Date();
-          startBtn.disabled = false;
-          stopBtn.disabled = true;
-          kmIn.disabled = false;
-          kmOut.disabled = true;
-          timerDisplay.textContent = formatTime(s.timer);
-          renderKmResult();
-          card.classList.remove('active');
+          let now = Date.now();
+          db.ref("states/" + driverId).update({
+            running: false,
+            timeOut: now
+          });
+          // Save to logs
           const log = {
             date: s.date,
             name: driverObj.name,
-            timeIn: s.timeIn ? formatTimeOnly(s.timeIn) : "",
-            timeOut: s.timeOut ? formatTimeOnly(s.timeOut) : "",
+            timeIn: s.timeIn ? formatTimeOnly(new Date(s.timeIn)) : "",
+            timeOut: now ? formatTimeOnly(new Date(now)) : "",
             kmIn: s.kmIn,
             kmOut: s.kmOut,
             totalKm: (+s.kmOut - +s.kmIn).toString(),
@@ -999,40 +1051,42 @@
             <span style="color:var(--primary)">Total: ${+s.kmOut - +s.kmIn} km</span><br>
             <span>Time: ${formatTime(s.timer)}</span>`
           );
-          s.kmIn = ""; s.kmOut = ""; s.timer = 0; s.startTime = null; s.timeIn = null; s.timeOut = null;
-          timerDisplay.textContent = formatTime(0);
-          renderDrivers();
+          // Reset for next day
+          setTimeout(() => {
+            db.ref("states/" + driverId).update({
+              kmIn: "",
+              kmOut: "",
+              timer: 0,
+              startTime: null,
+              timeIn: null,
+              timeOut: null
+            });
+          }, 1000);
         };
         btns.appendChild(stopBtn);
         card.appendChild(btns);
+
+        // Timer logic: only run if running
+        if (s.running) {
+          if (!timerIntervals[driverId]) {
+            timerIntervals[driverId] = setInterval(() => {
+              let now = Date.now();
+              let elapsed = Math.floor((now - s.startTime) / 1000);
+              db.ref("states/" + driverId + "/timer").set(elapsed);
+            }, 1000);
+          }
+        } else {
+          if (timerIntervals[driverId]) {
+            clearInterval(timerIntervals[driverId]);
+            delete timerIntervals[driverId];
+          }
+        }
+
         driverBoard.appendChild(card);
       });
     }
-    setInterval(() => {
-      Array.from(driverBoard.children).forEach((card, i) => {
-        const driverId = Object.keys(drivers)[i];
-        const s = driverState[driverId];
-        if (!s) return;
-        const btns = card.querySelectorAll('.driver-btns button');
-        const kmIn = card.querySelector('.driver-fields-row .input-km-wrap input[type="number"]:nth-child(1)');
-        const kmOut = card.querySelectorAll('.driver-fields-row .input-km-wrap input[type="number"]')[1];
-        if (btns.length === 2) {
-          btns[0].disabled = s.running || !s.kmIn || !s.date;
-          btns[1].disabled = !s.running || !s.kmOut;
-        }
-        if (kmIn) kmIn.disabled = s.running;
-        if (kmOut) kmOut.disabled = !s.running;
-        const kmResult = card.querySelector('.driver-km-result');
-        if(kmResult) {
-          if(s.kmIn && s.kmOut && !isNaN(+s.kmIn) && !isNaN(+s.kmOut) && +s.kmOut >= +s.kmIn) {
-            kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+s.kmOut - +s.kmIn) + ` km</span>`;
-          } else { kmResult.textContent = ''; }
-        }
-        if (s.running) card.classList.add('active');
-        else card.classList.remove('active');
-      });
-    }, 350);
 
+    // Real-time logs and report table code
     let allLogs = {};
     db.ref("logs").on("value", snap => {
       allLogs = snap.val()||{};
@@ -1063,8 +1117,9 @@
       let filtered = arr;
       if (reportDriver !== "All") filtered = filtered.filter(row => row.name === reportDriver);
       const now = new Date();
+      let finlandNow = new Date(now.getTime() + (3 - now.getTimezoneOffset() / 60) * 60 * 60 * 1000);
       if (reportPeriod === "daily") {
-        const today = now.toISOString().slice(0,10);
+        const today = finlandNow.toISOString().slice(0,10);
         filtered = filtered.filter(row => row.date === today);
       } else if (reportPeriod === "weekly") {
         function getWeek(d) {
@@ -1074,15 +1129,15 @@
           const yearStart = new Date(d.getFullYear(),0,1);
           return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
         }
-        const thisYear = now.getFullYear();
-        const thisWeek = getWeek(now);
+        const thisYear = finlandNow.getFullYear();
+        const thisWeek = getWeek(finlandNow);
         filtered = filtered.filter(row => {
           if (!row.date) return false;
           const d = new Date(row.date);
           return d.getFullYear() === thisYear && getWeek(d) === thisWeek;
         });
       } else if (reportPeriod === "monthly") {
-        const thisMonth = now.toISOString().slice(0,7);
+        const thisMonth = finlandNow.toISOString().slice(0,7);
         filtered = filtered.filter(row => (row.date||"").slice(0,7) === thisMonth);
       }
       filtered.sort((a, b) => {
