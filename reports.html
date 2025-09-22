@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <!-- Prevent zooming on mobile, fit like an app -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
   <title>KM Reports – Ravintola Tandoori Villa</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
@@ -467,7 +466,8 @@
     if(pendingDelete){ pendingDelete(); hideConfirmModal(); }
   };
 
-  document.getElementById('backHomeBtn').onclick = () => { window.location.href = "home.html"; };
+  // Back button: go to index.html
+  document.getElementById('backHomeBtn').onclick = () => { window.location.href = "index.html"; };
 
   // Global data
   let allDrivers = {};
@@ -512,6 +512,7 @@
     currentMode = "daily";
     currentPage = 1;
     showReportsTable();
+    updateMonthSelect();
   }
 
   dailyBtn.onclick = function(){
@@ -533,6 +534,7 @@
     currentPage=1;
     customRangeArea.style.display='none';
     monthSelectArea.style.display='flex';
+    updateMonthSelect();
     showReportsTable();
   };
   customBtn.onclick = function(){
@@ -598,7 +600,7 @@
       });
       return rowsArr;
     } else if(mode==="monthly") {
-      let monthToShow = currentMonth || today.slice(0,7);
+      let monthToShow = currentMonth || getLatestMonthForDriver(selectedDriver);
       let daysMap = {};
       all.filter(l=>l.date.slice(0,7)===monthToShow).forEach(l => {
         if(!daysMap[l.date]) daysMap[l.date] = [];
@@ -642,13 +644,23 @@
     }
     let logs = getDriverLogs(selectedDriver);
     let months = Array.from(new Set(logs.map(l=>l.date.slice(0,7)))).sort((a,b)=>b.localeCompare(a));
-    monthSelect.innerHTML = months.map(m=>{
+    if(months.length === 0) {
+      monthSelect.innerHTML = `<option value="" selected>-- No data --</option>`;
+      currentMonth = "";
+      return;
+    }
+    monthSelect.innerHTML = months.map((m, i)=>{
       let dateObj = new Date(m+"-01");
       let monthName = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
-      return `<option value="${m}">${monthName}</option>`;
+      return `<option value="${m}"${(i===0 && !currentMonth) || (currentMonth===m) ? " selected" : ""}>${monthName}</option>`;
     }).join('');
-    if(months.length && !currentMonth) currentMonth = months[0];
-    else if(months.length && !months.includes(currentMonth)) currentMonth = months[0];
+    if(months.length && (!currentMonth || !months.includes(currentMonth))) currentMonth = months[0];
+  }
+
+  function getLatestMonthForDriver(driver) {
+    let logs = getDriverLogs(driver);
+    let months = Array.from(new Set(logs.map(l=>l.date.slice(0,7)))).sort((a,b)=>b.localeCompare(a));
+    return months.length ? months[0] : "";
   }
 
   function showReportsTable() {
@@ -668,8 +680,9 @@
     if(currentMode==="weekly") titleText += `<span class="total-km">Last 7 Days: <b>${totalKm} km</b></span>`;
     if(currentMode==="monthly") {
       let monthText = "";
-      if(currentMonth) {
-        let dateObj = new Date(currentMonth+"-01");
+      let m = currentMonth || getLatestMonthForDriver(selectedDriver);
+      if(m) {
+        let dateObj = new Date(m+"-01");
         monthText = dateObj.toLocaleString('default', { month: 'long', year: 'numeric' });
       }
       titleText += `<span class="total-km">${monthText}: <b>${totalKm} km</b></span>`;
@@ -698,7 +711,6 @@
       tableHTML += `<tr><td colspan="6" style="text-align:center;color:#93c7e6;font-size:1.1em;font-weight:700;">No report data.</td></tr>`;
     } else {
       pageRows.forEach(day=>{
-        // If more than one log per day, show all in that day
         let dayKm = sumKm(day.logs);
         day.logs.forEach((row, idx)=>{
           tableHTML += `<tr>
@@ -733,16 +745,15 @@
       });
       showModal("Deleted", `All reports for <b>${selectedDriver}</b> on <b>${toDisplayDate(date)}</b> deleted.`);
       showReportsTable();
+      updateMonthSelect();
     });
   };
 
-  // Allow horizontal scroll for tables only on mobile
   window.addEventListener('resize', function(){
     const wrap = document.querySelector('.driver-report-table-wrap');
     if(wrap) wrap.scrollLeft = 0;
   });
 
-  // Initial state
   showReportsTable();
 </script>
 </body>
