@@ -299,7 +299,7 @@
           <i class="fas fa-car"></i> Delivery Drivers Log
         </span>
         <span class="header-desc">
-          Ravintola Tandoori Villa &nbsp; &nbsp; Record daily kilometers and shift hours
+          Ravintola Tandoori Villa &nbsp;|&nbsp; Log car drivers' shift kilometers and time daily
         </span>
       </div>
       <div class="header-btnbar">
@@ -317,7 +317,7 @@
       1. Add each delivery driver's name at the top.<br>
       2. For each driver, enter today's date, the starting kilometers, and the ending kilometers.<br>
       3. When ready, press <b>Start</b> (date/start will lock, end will stay editable and timer starts).<br>
-      4. When finished, press <b>Stop</b> to save the shift (timer stops and resets to 0 everywhere).<br>
+      4. When finished, press <b>Stop</b> to save the shift (timer stops).<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
     </div>
     <div class="modal-bg" id="modalBg">
@@ -380,6 +380,7 @@
     const confirmModalDetails = document.getElementById('confirmModalDetails');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    // KM Reports & Logout
     const showReportsBtn = document.getElementById("showReportsBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const logoutModalBg = document.getElementById("logoutModalBg");
@@ -648,10 +649,19 @@
             s.timer = Math.floor((Date.now() - new Date(s.startTime).getTime())/1000);
           }
           s.stopped = true;
+          updateDriverState(driverId);
+          const log = {
+            date: s.date,
+            name: driverObj.name,
+            kmIn: s.kmIn,
+            kmOut: s.kmOut,
+            totalKm: (+s.kmOut - +s.kmIn).toString(),
+            totalTime: formatTime(s.timer),
+            timestamp: new Date().toISOString()
+          };
+          db.ref("logs").push(log);
           s.running = false;
           s.startTime = null;
-          s.timer = 0; // Reset timer to 0 here
-          updateDriverState(driverId); // This will trigger all clients to update
           if (s.timerInterval) clearInterval(s.timerInterval);
           s.timerInterval = null;
           renderKmResult();
@@ -662,7 +672,7 @@
             <span style="color:var(--primary)">Total: ${+s.kmOut - +s.kmIn} km</span><br>
             <span>Time: ${formatTime(s.timer)}</span>`
           );
-          s.kmIn = ""; s.kmOut = ""; s.startTime = null; s.stopped = false;
+          s.kmIn = ""; s.kmOut = ""; s.timer = 0; s.startTime = null; s.stopped = false;
           timerDisplay.textContent = formatTime(0);
           updateDriverState(driverId);
           renderDrivers();
@@ -672,15 +682,12 @@
 
         driverBoard.appendChild(card);
 
-        // Timer control: stop interval and reset timer on ANY device if stopped is true!
+        // Timer control: stop interval on ANY device if s.stopped!
         if (s.running && s.startTime && !s.stopped) {
           if (!s.timerInterval) {
             s.timerInterval = setInterval(() => {
-              // Only update timer if not stopped
-              if (!s.stopped) {
-                s.timer = Math.floor((Date.now() - new Date(s.startTime).getTime())/1000);
-                timerDisplay.textContent = formatTime(s.timer);
-              }
+              s.timer = Math.floor((Date.now() - new Date(s.startTime).getTime())/1000);
+              timerDisplay.textContent = formatTime(s.timer);
             }, 1000);
           }
         } else {
@@ -688,8 +695,6 @@
             clearInterval(s.timerInterval);
             s.timerInterval = null;
           }
-          // When stopped is true, always show timer as 0
-          timerDisplay.textContent = formatTime(0);
         }
       });
     }
@@ -715,14 +720,7 @@
             kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+s.kmOut - +s.kmIn) + ` km</span>`;
           } else { kmResult.textContent = ''; }
         }
-        // On ANY device, always show timer 0 if stopped is true
-        if (timerDisplay) {
-          if (s.stopped || !s.running) {
-            timerDisplay.textContent = formatTime(0);
-          } else {
-            timerDisplay.textContent = formatTime(s.timer || 0);
-          }
-        }
+        if (timerDisplay) timerDisplay.textContent = formatTime(s.timer || 0);
         if (s.running) card.classList.add('active');
         else card.classList.remove('active');
       });
