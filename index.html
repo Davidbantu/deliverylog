@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
   <style>
+    /* --- Keep all CSS from previous code, unchanged --- */
     :root {
       --main-bg: linear-gradient(135deg, #0d47a1 0%, #000 100%);
       --card-bg: #181c24;
@@ -18,562 +19,61 @@
       --gap: 24px;
       --card-radius: 15px;
     }
-    html, body {
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      background: var(--main-bg);
-      box-sizing: border-box;
-      width: 100vw;
-      font-family: 'Poppins', Arial, sans-serif;
-      color: #fff;
-      overflow-x: hidden;
-    }
-    body {
-      width: 100vw;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .page-wrapper {
-      width: 100vw;
-      max-width: 100vw;
-      margin: 0 auto;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    .header {
-      width: 100%;
-      background: var(--card-bg);
-      color: var(--accent);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 19px 16px 12px 16px;
-      margin: 0 0 var(--gap) 0;
-      margin-top: 24px;
-      border-radius: var(--card-radius);
-      box-shadow: 0 2px 9px rgba(66, 165, 245, 0.08);
-      min-height: 43px;
-      letter-spacing: 0.03em;
-      max-width: 1100px;
-      align-self: center;
-    }
-    .header-row {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .header-title {
-      font-size: 1.17rem;
-      font-weight: 800;
-      color: #fff;
-      font-family: 'Poppins', Arial, sans-serif;
-      letter-spacing: 0.03em;
-      text-shadow: 0 2px 12px #009de044;
-      white-space: nowrap;
-      flex: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6em;
-    }
-    .header-desc {
-      font-size: 0.99em;
-      font-weight: 500;
-      color: #bbdefb;
-      opacity: 0.88;
-      margin-left: 18px;
-      font-family: 'Poppins', Arial, sans-serif;
-      letter-spacing: 0.01em;
-      text-align: center;
-      flex: none;
-      display: inline-block;
-      white-space: normal;
-      max-width: 68vw;
-    }
-    .driver-addbar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.45em;
-      margin: 13px 0 16px 0;
-      width: 100%;
-      max-width: 600px;
-      padding: 0 3px;
-      align-self: center;
-    }
-    .driver-addbar input[type="text"] {
-      flex: 1;
-      font-size: 1em;
-      padding: 0.55em 1em;
-      background: #212a40;
-      border: none;
-      border-radius: 9px;
-      color: var(--accent);
-      outline: none;
-      font-family: 'Poppins', Arial, sans-serif;
-      font-weight: 600;
-      margin-right: 0.07em;
-    }
-    .driver-addbar button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 9px;
-      font-size: 0.97rem;
-      font-weight: 700;
-      padding: 7px 18px;
-      cursor: pointer;
-      transition: background 0.16s;
-      font-family: inherit;
-      letter-spacing: 0.01em;
-      display: flex;
-      align-items: center;
-      gap: 0.22em;
-    }
+    html, body { min-height: 100vh; margin: 0; padding: 0; background: var(--main-bg); box-sizing: border-box; width: 100vw; font-family: 'Poppins', Arial, sans-serif; color: #fff; overflow-x: hidden;}
+    body { width: 100vw; min-height: 100vh; display: flex; flex-direction: column; align-items: stretch;}
+    .page-wrapper { width: 100vw; max-width: 100vw; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 0; box-sizing: border-box;}
+    .header { width: 100%; background: var(--card-bg); color: var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 19px 16px 12px 16px; margin: 0 0 var(--gap) 0; margin-top: 24px; border-radius: var(--card-radius); box-shadow: 0 2px 9px rgba(66, 165, 245, 0.08); min-height: 43px; letter-spacing: 0.03em; max-width: 1100px; align-self: center;}
+    .header-row { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;}
+    .header-title { font-size: 1.17rem; font-weight: 800; color: #fff; font-family: 'Poppins', Arial, sans-serif; letter-spacing: 0.03em; text-shadow: 0 2px 12px #009de044; white-space: nowrap; flex: none; display: inline-flex; align-items: center; gap: 0.6em;}
+    .header-desc { font-size: 0.99em; font-weight: 500; color: #bbdefb; opacity: 0.88; margin-left: 18px; font-family: 'Poppins', Arial, sans-serif; letter-spacing: 0.01em; text-align: center; flex: none; display: inline-block; white-space: normal; max-width: 68vw;}
+    .driver-addbar { display: flex; justify-content: center; align-items: center; gap: 0.45em; margin: 13px 0 16px 0; width: 100%; max-width: 600px; padding: 0 3px; align-self: center;}
+    .driver-addbar input[type="text"] { flex: 1; font-size: 1em; padding: 0.55em 1em; background: #212a40; border: none; border-radius: 9px; color: var(--accent); outline: none; font-family: 'Poppins', Arial, sans-serif; font-weight: 600; margin-right: 0.07em;}
+    .driver-addbar button { background: var(--primary); color: #fff; border: none; border-radius: 9px; font-size: 0.97rem; font-weight: 700; padding: 7px 18px; cursor: pointer; transition: background 0.16s; font-family: inherit; letter-spacing: 0.01em; display: flex; align-items: center; gap: 0.22em;}
     .driver-addbar button:hover { background: var(--primary-hover);}
-    .log-board {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--gap);
-      width: 100vw;
-      max-width: 1100px;
-      align-items: stretch;
-      margin: 0 auto 17px auto;
-      padding: 0 12px;
-      box-sizing: border-box;
-      justify-items: center;
-      overflow-x: hidden;
-    }
-    .driver-card {
-      background: var(--card-bg);
-      border-radius: var(--card-radius);
-      box-shadow: 0 2px 8px rgba(66,165,245,0.08);
-      border: 2px solid var(--border);
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      max-width: 100%;
-      font-size: 0.97rem;
-      position: relative;
-      margin-bottom: 0;
-      margin-top: 16px;
-      margin-bottom: 16px;
-      word-break: break-word;
-      transition: border 0.13s, box-shadow 0.13s;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .driver-card.active {
-      border: 2.2px solid var(--primary);
-      box-shadow: 0 2px 12px #42a5f52a;
-    }
-    .driver-card-header {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 12px 18px 8px 18px;
-      background: #0d47a1;
-      color: var(--accent);
-      font-size: 1.07em;
-      font-weight: 700;
-      gap: 14px;
-      border-bottom: 1px solid var(--border);
-      border-top-left-radius: var(--card-radius);
-      border-top-right-radius: var(--card-radius);
-      box-sizing: border-box;
-      flex-wrap: nowrap;
-    }
-    .driver-card-header .driver-name {
-      font-size: 1.08em;
-      font-weight: 700;
-      color: #fff;
-      flex: 1 1 auto;
-      min-width: 0;
-      letter-spacing: 0.04em;
-      overflow-wrap: break-word;
-      word-break: break-word;
-      white-space: normal;
-      display: inline-block;
-      margin-right: 10px;
-    }
-    .driver-card-header .driver-date {
-      font-size: 0.97em;
-      color: #d5f5ff;
-      background: #183350;
-      border-radius: 0.5em;
-      padding: 3px 8px;
-      border: none;
-      outline: none;
-      font-family: inherit;
-      font-weight: 600;
-      width: 120px;
-      min-width: 120px;
-      max-width: 160px;
-      text-align: center;
-      flex-shrink: 0;
-      margin-right: 10px;
-      position: relative;
-      z-index: 1;
-      cursor: pointer;
-    }
-    .driver-card-header .driver-date[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-      cursor: pointer;
-    }
-    .driver-card-header .driver-delete {
-      color: var(--red);
-      font-size: 1.14em;
-      border: none;
-      background: none;
-      cursor: pointer;
-      margin-left: auto;
-      border-radius: 50%;
-      padding: 0.07em 0.36em;
-      transition: background 0.11s;
-      flex-shrink: 0;
-    }
-    .driver-fields-row {
-      display: flex;
-      align-items: center;
-      gap: 0.7em;
-      margin: 13px 0 3px 0;
-      padding: 0 15px;
-      justify-content: stretch;
-    }
-    .driver-fields-row label {
-      font-size: 1em;
-      font-weight: 600;
-      color: #bbdefb;
-      margin-right: 0;
-      padding-right: 0;
-      font-family: inherit;
-      white-space: nowrap;
-    }
-    .input-km-wrap {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 7px;
-      background: #212a40;
-      box-shadow: 0 1px 4px #009de018;
-      margin: 0 0.15em;
-      padding-left: 0.15em;
-      padding-right: 0.2em;
-    }
-    .input-km-wrap input[type="number"] {
-      width: 5.5em;
-      font-size: 1.07em;
-      padding: 0.42em 0.12em 0.42em 0.55em;
-      background: #212a40;
-      border: 1px solid #384164;
-      border-radius: 7px 0 0 7px;
-      color: #fff;
-      outline: none;
-      text-align: center;
-      font-family: inherit;
-      font-weight: 700;
-      white-space: nowrap;
-      box-shadow: none;
-    }
-    .input-km-wrap .km-unit {
-      font-size: 0.98em;
-      color: #7ec5fd;
-      margin-left: 0.2em;
-      margin-right: 0.3em;
-      font-weight: 700;
-      white-space: nowrap;
-      background: transparent;
-      border: none;
-      padding: 0;
-      pointer-events: none;
-      user-select: none;
-    }
-    .driver-km-result {
-      margin: 0 0 2px 0;
-      font-size: 1.08em;
-      font-weight: 700;
-      color: var(--primary);
-      font-family: inherit;
-      letter-spacing: 0.04em;
-      text-align: left;
-      padding: 0 15px;
-      min-height: 21px;
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-    }
-    .driver-timer-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.6em;
-      margin: 0 0 2px 0;
-      min-height: 1.4em;
-      padding: 0 15px;
-    }
-    .driver-timer {
-      font-size: 1.08em;
-      font-weight: 800;
-      color: #ffc107;
-      background: #212a40;
-      border-radius: 7px;
-      padding: 2px 14px;
-      min-width: 4.6em;
-      text-align: center;
-      letter-spacing: 0.025em;
-      font-family: inherit;
-      border: 1.1px solid #009de055;
-      box-shadow: 0 1px 7px #009de022;
-    }
-    .driver-btns {
-      display: flex;
-      gap: 0.7em;
-      margin-top: 8px;
-      padding: 0 15px 15px 15px;
-    }
-    .driver-btns button {
-      flex: 1 1 0;
-      font-size: 1.03em;
-      font-weight: 700;
-      border: none;
-      border-radius: 9px;
-      padding: 0.65em 0;
-      background: linear-gradient(90deg,var(--primary),var(--primary-hover));
-      color: #fff;
-      box-shadow: 0 1px 4px rgba(66,165,245,0.09);
-      cursor: pointer;
-      letter-spacing: 0.04em;
-      transition: background 0.13s;
-      min-width: 0;
-      font-family: inherit;
-    }
+    .log-board { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); width: 100vw; max-width: 1100px; align-items: stretch; margin: 0 auto 17px auto; padding: 0 12px; box-sizing: border-box; justify-items: center; overflow-x: hidden;}
+    .driver-card { background: var(--card-bg); border-radius: var(--card-radius); box-shadow: 0 2px 8px rgba(66,165,245,0.08); border: 2px solid var(--border); padding: 0; display: flex; flex-direction: column; min-width: 0; max-width: 100%; font-size: 0.97rem; position: relative; margin-bottom: 0; margin-top: 16px; margin-bottom: 16px; word-break: break-word; transition: border 0.13s, box-shadow 0.13s; width: 100%; box-sizing: border-box;}
+    .driver-card.active { border: 2.2px solid var(--primary); box-shadow: 0 2px 12px #42a5f52a;}
+    .driver-card-header { width: 100%; display: flex; align-items: center; justify-content: flex-start; padding: 12px 18px 8px 18px; background: #0d47a1; color: var(--accent); font-size: 1.07em; font-weight: 700; gap: 14px; border-bottom: 1px solid var(--border); border-top-left-radius: var(--card-radius); border-top-right-radius: var(--card-radius); box-sizing: border-box; flex-wrap: nowrap;}
+    .driver-card-header .driver-name { font-size: 1.08em; font-weight: 700; color: #fff; flex: 1 1 auto; min-width: 0; letter-spacing: 0.04em; overflow-wrap: break-word; word-break: break-word; white-space: normal; display: inline-block; margin-right: 10px;}
+    .driver-card-header .driver-date { font-size: 0.97em; color: #d5f5ff; background: #183350; border-radius: 0.5em; padding: 3px 8px; border: none; outline: none; font-family: inherit; font-weight: 600; width: 120px; min-width: 120px; max-width: 160px; text-align: center; flex-shrink: 0; margin-right: 10px; position: relative; z-index: 1; cursor: pointer;}
+    .driver-card-header .driver-date[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer;}
+    .driver-card-header .driver-delete { color: var(--red); font-size: 1.14em; border: none; background: none; cursor: pointer; margin-left: auto; border-radius: 50%; padding: 0.07em 0.36em; transition: background 0.11s; flex-shrink: 0;}
+    .driver-fields-row { display: flex; align-items: center; gap: 0.7em; margin: 13px 0 3px 0; padding: 0 15px; justify-content: stretch;}
+    .driver-fields-row label { font-size: 1em; font-weight: 600; color: #bbdefb; margin-right: 0; padding-right: 0; font-family: inherit; white-space: nowrap;}
+    .input-km-wrap { display: inline-flex; align-items: center; border-radius: 7px; background: #212a40; box-shadow: 0 1px 4px #009de018; margin: 0 0.15em; padding-left: 0.15em; padding-right: 0.2em;}
+    .input-km-wrap input[type="number"] { width: 5.5em; font-size: 1.07em; padding: 0.42em 0.12em 0.42em 0.55em; background: #212a40; border: 1px solid #384164; border-radius: 7px 0 0 7px; color: #fff; outline: none; text-align: center; font-family: inherit; font-weight: 700; white-space: nowrap; box-shadow: none;}
+    .input-km-wrap .km-unit { font-size: 0.98em; color: #7ec5fd; margin-left: 0.2em; margin-right: 0.3em; font-weight: 700; white-space: nowrap; background: transparent; border: none; padding: 0; pointer-events: none; user-select: none;}
+    .driver-km-result { margin: 0 0 2px 0; font-size: 1.08em; font-weight: 700; color: var(--primary); font-family: inherit; letter-spacing: 0.04em; text-align: left; padding: 0 15px; min-height: 21px; display: flex; align-items: center; gap: 0.4em;}
+    .driver-timer-bar { display: flex; align-items: center; gap: 0.6em; margin: 0 0 2px 0; min-height: 1.4em; padding: 0 15px;}
+    .driver-timer { font-size: 1.08em; font-weight: 800; color: #ffc107; background: #212a40; border-radius: 7px; padding: 2px 14px; min-width: 4.6em; text-align: center; letter-spacing: 0.025em; font-family: inherit; border: 1.1px solid #009de055; box-shadow: 0 1px 7px #009de022;}
+    .driver-btns { display: flex; gap: 0.7em; margin-top: 8px; padding: 0 15px 15px 15px;}
+    .driver-btns button { flex: 1 1 0; font-size: 1.03em; font-weight: 700; border: none; border-radius: 9px; padding: 0.65em 0; background: linear-gradient(90deg,var(--primary),var(--primary-hover)); color: #fff; box-shadow: 0 1px 4px rgba(66,165,245,0.09); cursor: pointer; letter-spacing: 0.04em; transition: background 0.13s; min-width: 0; font-family: inherit;}
     .driver-btns button:active { background: var(--primary-hover);}
-    .driver-btns .stop-btn {
-      background: linear-gradient(90deg,#ff3b30 30%,#c11 100%);
-      color: #fff;
-      font-family: inherit;
-    }
+    .driver-btns .stop-btn { background: linear-gradient(90deg,#ff3b30 30%,#c11 100%); color: #fff; font-family: inherit;}
     .driver-btns .stop-btn:active { background: #ff3b30;}
-    .driver-btns .disabled, .driver-btns button:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    .how-to-use {
-      width: 100vw;
-      max-width: 1050px;
-      margin: 18px auto 0 auto;
-      padding: 13px 14px 11px 14px;
-      background: #161a23cc;
-      border-radius: 10px;
-      color: #bbdefb;
-      font-size: 0.97em;
-      font-family: 'Poppins', Arial, sans-serif;
-      text-align: left;
-      line-height: 1.6;
-      letter-spacing: 0.01em;
-      box-shadow: 0 2px 8px #212a4033;
-      box-sizing: border-box;
-      overflow-x: hidden;
-      align-self: center;
-    }
-    @media (max-width: 1100px) {
-      .log-board {
-        max-width: 99vw;
-      }
-      .driver-card {
-        min-width: 0;
-        max-width: 99vw;
-      }
-    }
-    @media (max-width: 900px) {
-      .log-board {
-        grid-template-columns: 1fr;
-        padding: 0 8px;
-        gap: 16px;
-      }
-      .driver-card {
-        min-width: 98vw;
-        max-width: 98vw;
-        font-size: 0.97em;
-      }
-    }
-    @media (max-width: 600px) {
-      .log-board { grid-template-columns: 1fr; padding: 0 2px; gap:16px;}
-      .driver-card { min-width: 99vw; max-width: 99vw; font-size: 0.96em;}
-      .driver-card-header .driver-date {
-        width: 130px;
-        min-width: 120px;
-        max-width: 140px;
-        font-size: 1.05em;
-      }
-    }
-    @media (max-width: 450px) {
-      .driver-card-header, .driver-fields-row, .driver-btns, .driver-km-result, .driver-timer-bar {padding-left:4px;padding-right:4px;}
-      .driver-card { font-size: 0.93em;}
-    }
-    .modal-bg {
-      display: none;
-      position: fixed;
-      z-index: 500;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(13, 32, 70, 0.82);
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-bg.active {
-      display: flex;
-    }
-    .modal-content {
-      background: var(--card-bg);
-      color: var(--accent);
-      border-radius: 18px;
-      border: 2px solid var(--primary);
-      box-shadow: 0 7px 32px #42a5f547;
-      padding: 28px 30px 22px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 270px;
-      max-width: 95vw;
-      min-height: 135px;
-      font-family: 'Poppins', Arial, sans-serif;
-      animation: pop .18s cubic-bezier(.45,1.4,.68,1.02);
-      position: relative;
-    }
-    .modal-title {
-      font-size: 1.12em;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 9px;
-      text-align: center;
-      letter-spacing: 0.02em;
-    }
-    .modal-details {
-      margin-bottom: 16px;
-      color: var(--accent);
-      font-size: 1em;
-      font-weight: 500;
-      text-align: center;
-      word-break: break-word;
-    }
-    .modal-done-btn {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.01em;
-      font-weight: 700;
-      padding: 10px 34px;
-      cursor: pointer;
-      transition: background 0.18s;
-      margin-top: 2px;
-      font-family: inherit;
-      box-shadow: 0 2px 8px #42a5f533;
-      letter-spacing: 0.03em;
-    }
-    .modal-done-btn:hover {
-      background: var(--primary-hover);
-    }
-    .modal-close {
-      position: absolute;
-      top: 11px; right: 16px;
-      background: none;
-      border: none;
-      color: #bbdefb;
-      font-size: 1.22em;
-      cursor: pointer;
-      padding: 0;
-      border-radius: 50%;
-      transition: background 0.12s;
-    }
-    .modal-close:active {
-      background: #212a40;
-    }
-    @keyframes pop {
-      from { transform: scale(0.91); opacity: 0.3;}
-      to   { transform: scale(1);    opacity: 1;}
-    }
-    .modal-confirm {
-      background: var(--card-bg);
-      color: var(--accent);
-      border-radius: 18px;
-      border: 2px solid var(--red);
-      box-shadow: 0 7px 32px #ff3b3047;
-      padding: 22px 24px 18px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 230px;
-      max-width: 95vw;
-      min-height: 80px;
-      font-family: 'Poppins', Arial, sans-serif;
-      position: relative;
-      animation: pop .18s cubic-bezier(.45,1.4,.68,1.02);
-    }
-    .modal-confirm-title {
-      font-size: 1.09em;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 9px;
-      text-align: center;
-      letter-spacing: 0.02em;
-    }
-    .modal-confirm-details {
-      margin-bottom: 16px;
-      color: var(--accent);
-      font-size: 1em;
-      font-weight: 500;
-      text-align: center;
-      word-break: break-word;
-    }
-    .modal-confirm-btns {
-      display: flex;
-      gap: 18px;
-      margin-top: 5px;
-    }
-    .modal-confirm-btn {
-      background: var(--red);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.01em;
-      font-weight: 700;
-      padding: 7px 22px;
-      cursor: pointer;
-      transition: background 0.18s;
-      font-family: inherit;
-      box-shadow: 0 2px 8px #ff3b3033;
-      letter-spacing: 0.03em;
-    }
-    .modal-confirm-btn:hover {
-      background: #c11;
-    }
-    .modal-cancel-btn {
-      background: var(--border);
-      color: #bbdefb;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.01em;
-      font-weight: 700;
-      padding: 7px 22px;
-      cursor: pointer;
-      transition: background 0.18s;
-      font-family: inherit;
-      box-shadow: 0 2px 8px #212a4033;
-      letter-spacing: 0.03em;
-    }
+    .driver-btns .disabled, .driver-btns button:disabled { opacity: 0.5; pointer-events: none;}
+    .how-to-use { width: 100vw; max-width: 1050px; margin: 18px auto 0 auto; padding: 13px 14px 11px 14px; background: #161a23cc; border-radius: 10px; color: #bbdefb; font-size: 0.97em; font-family: 'Poppins', Arial, sans-serif; text-align: left; line-height: 1.6; letter-spacing: 0.01em; box-shadow: 0 2px 8px #212a4033; box-sizing: border-box; overflow-x: hidden; align-self: center;}
+    @media (max-width: 1100px) { .log-board { max-width: 99vw; } .driver-card { min-width: 0; max-width: 99vw; } }
+    @media (max-width: 900px) { .log-board { grid-template-columns: 1fr; padding: 0 8px; gap: 16px; } .driver-card { min-width: 98vw; max-width: 98vw; font-size: 0.97em; } }
+    @media (max-width: 600px) { .log-board { grid-template-columns: 1fr; padding: 0 2px; gap:16px;} .driver-card { min-width: 99vw; max-width: 99vw; font-size: 0.96em;} .driver-card-header .driver-date { width: 130px; min-width: 120px; max-width: 140px; font-size: 1.05em; } }
+    @media (max-width: 450px) { .driver-card-header, .driver-fields-row, .driver-btns, .driver-km-result, .driver-timer-bar {padding-left:4px;padding-right:4px;} .driver-card { font-size: 0.93em;} }
+    .modal-bg { display: none; position: fixed; z-index: 500; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(13, 32, 70, 0.82); align-items: center; justify-content: center;}
+    .modal-bg.active { display: flex;}
+    .modal-content { background: var(--card-bg); color: var(--accent); border-radius: 18px; border: 2px solid var(--primary); box-shadow: 0 7px 32px #42a5f547; padding: 28px 30px 22px 30px; display: flex; flex-direction: column; align-items: center; min-width: 270px; max-width: 95vw; min-height: 135px; font-family: 'Poppins', Arial, sans-serif; animation: pop .18s cubic-bezier(.45,1.4,.68,1.02); position: relative;}
+    .modal-title { font-size: 1.12em; font-weight: 700; color: #fff; margin-bottom: 9px; text-align: center; letter-spacing: 0.02em;}
+    .modal-details { margin-bottom: 16px; color: var(--accent); font-size: 1em; font-weight: 500; text-align: center; word-break: break-word;}
+    .modal-done-btn { background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 1.01em; font-weight: 700; padding: 10px 34px; cursor: pointer; transition: background 0.18s; margin-top: 2px; font-family: inherit; box-shadow: 0 2px 8px #42a5f533; letter-spacing: 0.03em;}
+    .modal-done-btn:hover { background: var(--primary-hover);}
+    .modal-close { position: absolute; top: 11px; right: 16px; background: none; border: none; color: #bbdefb; font-size: 1.22em; cursor: pointer; padding: 0; border-radius: 50%; transition: background 0.12s;}
+    .modal-close:active { background: #212a40;}
+    @keyframes pop { from { transform: scale(0.91); opacity: 0.3;} to   { transform: scale(1);    opacity: 1;} }
+    .modal-confirm { background: var(--card-bg); color: var(--accent); border-radius: 18px; border: 2px solid var(--red); box-shadow: 0 7px 32px #ff3b3047; padding: 22px 24px 18px 24px; display: flex; flex-direction: column; align-items: center; min-width: 230px; max-width: 95vw; min-height: 80px; font-family: 'Poppins', Arial, sans-serif; position: relative; animation: pop .18s cubic-bezier(.45,1.4,.68,1.02);}
+    .modal-confirm-title { font-size: 1.09em; font-weight: 700; color: #fff; margin-bottom: 9px; text-align: center; letter-spacing: 0.02em;}
+    .modal-confirm-details { margin-bottom: 16px; color: var(--accent); font-size: 1em; font-weight: 500; text-align: center; word-break: break-word;}
+    .modal-confirm-btns { display: flex; gap: 18px; margin-top: 5px;}
+    .modal-confirm-btn { background: var(--red); color: #fff; border: none; border-radius: 10px; font-size: 1.01em; font-weight: 700; padding: 7px 22px; cursor: pointer; transition: background 0.18s; font-family: inherit; box-shadow: 0 2px 8px #ff3b3033; letter-spacing: 0.03em;}
+    .modal-confirm-btn:hover { background: #c11;}
+    .modal-cancel-btn { background: var(--border); color: #bbdefb; border: none; border-radius: 10px; font-size: 1.01em; font-weight: 700; padding: 7px 22px; cursor: pointer; transition: background 0.18s; font-family: inherit; box-shadow: 0 2px 8px #212a4033; letter-spacing: 0.03em;}
   </style>
 </head>
 <body>
@@ -596,9 +96,9 @@
     <div class="how-to-use" id="howToUse">
       <b>How to use:</b><br>
       1. Add each delivery driver's name at the top.<br>
-      2. For each driver, enter today's date and the starting kilometers, then press <b>Start</b>.<br>
-      3. At the end of the shift, enter the ending kilometers and press <b>Stop</b>.<br>
-      4. The timer and total kilometers will be shown for the day.<br>
+      2. For each driver, enter today's date, the starting kilometers, and the ending kilometers.<br>
+      3. When ready, press <b>Start</b> (date/start will lock, end will stay editable).<br>
+      4. When finished, press <b>Stop</b> to save the shift.<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
     </div>
     <div class="modal-bg" id="modalBg">
@@ -642,6 +142,7 @@
       const s = String(sec%60).padStart(2,0);
       return `${h}:${m}:${s}`;
     }
+
     let driverState = {};
     let drivers = {};
     const newDriverName = document.getElementById('newDriverName');
@@ -657,6 +158,7 @@
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
     let pendingDeleteDriverId = null;
 
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCirYQ_46JiSkMIwCNs1nSi89dvB1MUg_A",
       authDomain: "deliverylog12.firebaseapp.com",
@@ -675,34 +177,26 @@
       modalBg.classList.add('active');
       setTimeout(() => { modalDone.focus(); }, 100);
     }
-    function hideModal() {
-      modalBg.classList.remove('active');
-    }
+    function hideModal() { modalBg.classList.remove('active'); }
     modalClose.onclick = hideModal;
     modalDone.onclick = hideModal;
-    modalBg.onclick = function(e) {
-      if (e.target === modalBg) hideModal();
-    };
+    modalBg.onclick = function(e) { if (e.target === modalBg) hideModal(); };
     function showConfirmModal(driverId, driverName) {
       confirmModalDetails.innerHTML = `Are you sure you want to delete <b>${driverName}</b>? This cannot be undone.`;
       confirmModalBg.classList.add('active');
       pendingDeleteDriverId = driverId;
       setTimeout(() => { confirmDeleteBtn.focus(); }, 100);
     }
-    function hideConfirmModal() {
-      confirmModalBg.classList.remove('active');
-      pendingDeleteDriverId = null;
-    }
+    function hideConfirmModal() { confirmModalBg.classList.remove('active'); pendingDeleteDriverId = null; }
     cancelDeleteBtn.onclick = hideConfirmModal;
-    confirmModalBg.onclick = function(e) {
-      if (e.target === confirmModalBg) hideConfirmModal();
-    };
+    confirmModalBg.onclick = function(e) { if (e.target === confirmModalBg) hideConfirmModal(); };
     confirmDeleteBtn.onclick = function() {
       if (pendingDeleteDriverId) {
         db.ref("drivers/" + pendingDeleteDriverId).remove();
         hideConfirmModal();
       }
     };
+
     addDriverBtn.onclick = () => {
       const name = newDriverName.value.trim();
       if (!name) return;
@@ -713,7 +207,6 @@
         name,
         date: new Date().toISOString().slice(0,10),
         kmIn: "",
-        kmOut: "",
         running: false,
         timer: 0,
         startTime: "",
@@ -722,9 +215,7 @@
       });
       newDriverName.value = '';
     };
-    newDriverName.addEventListener("keypress", e => {
-      if (e.key === "Enter") addDriverBtn.click();
-    });
+    newDriverName.addEventListener("keypress", e => { if (e.key === "Enter") addDriverBtn.click(); });
 
     db.ref("drivers").on("value", snap => {
       drivers = snap.val() || {};
@@ -732,6 +223,7 @@
     });
 
     let timerIntervals = {};
+    let localKmOutState = {}; // local state for end km per driver
 
     function renderDrivers() {
       driverBoard.innerHTML = "";
@@ -744,12 +236,11 @@
         if (!driverState[driverId]) driverState[driverId] = {};
         Object.assign(driverState[driverId], driverObj);
         const s = driverState[driverId];
+        if (!localKmOutState.hasOwnProperty(driverId)) localKmOutState[driverId] = "";
 
-        // Local-only field for KM Out
-        if (!s.local) s.local = {};
-        let localKmIn = s.running ? s.kmIn : (s.local.kmIn !== undefined ? s.local.kmIn : s.kmIn || "");
-        let localKmOut = s.local.kmOut !== undefined ? s.local.kmOut : "";
-        let localDate = s.running ? s.date : (s.local.date !== undefined ? s.local.date : s.date || new Date().toISOString().slice(0,10));
+        let localKmIn = s.kmIn || "";
+        let localDate = s.date || new Date().toISOString().slice(0,10);
+        let localKmOut = localKmOutState[driverId];
 
         const card = document.createElement('div');
         card.className = 'driver-card' + (s.running ? ' active' : '');
@@ -759,6 +250,7 @@
         nameEl.className = 'driver-name';
         nameEl.textContent = s.name || '';
 
+        // Date input
         const dateEl = document.createElement('input');
         dateEl.type = 'date';
         dateEl.className = 'driver-date';
@@ -766,7 +258,7 @@
         dateEl.maxLength = 10;
         dateEl.disabled = s.running;
         dateEl.oninput = e => {
-          s.local.date = e.target.value;
+          s.date = e.target.value;
         };
         dateEl.onblur = dateEl.onkeyup = function(e) {
           if (!/^\d{4}-\d{2}-\d{2}$/.test(dateEl.value)) {
@@ -774,6 +266,7 @@
           }
         };
         dateEl.onclick = function(e) { e.target.showPicker && e.target.showPicker(); };
+
         const delBtn = document.createElement('button');
         delBtn.className = 'driver-delete';
         delBtn.title = "Remove driver";
@@ -787,6 +280,7 @@
         const fieldsRow = document.createElement('div');
         fieldsRow.className = 'driver-fields-row';
 
+        // Start km input
         const kmInLbl = document.createElement('label');
         kmInLbl.textContent = "In";
         const kmInWrap = document.createElement('span');
@@ -797,7 +291,7 @@
         kmIn.value = localKmIn;
         kmIn.disabled = s.running;
         kmIn.oninput = e => {
-          s.local.kmIn = e.target.value;
+          s.kmIn = e.target.value;
           renderKmResult();
         };
         const kmInUnit = document.createElement('span');
@@ -808,6 +302,7 @@
         fieldsRow.appendChild(kmInLbl);
         fieldsRow.appendChild(kmInWrap);
 
+        // End km input
         const kmOutLbl = document.createElement('label');
         kmOutLbl.textContent = "Out";
         const kmOutWrap = document.createElement('span');
@@ -816,9 +311,9 @@
         kmOut.type = 'number';
         kmOut.placeholder = 'End';
         kmOut.value = localKmOut;
-        kmOut.disabled = !s.running ? true : false;
+        kmOut.disabled = false; // Always enabled unless after stop/reset
         kmOut.oninput = e => {
-          s.local.kmOut = e.target.value;
+          localKmOutState[driverId] = e.target.value;
           renderKmResult();
         };
         const kmOutUnit = document.createElement('span');
@@ -833,8 +328,8 @@
         const kmResult = document.createElement('div');
         kmResult.className = 'driver-km-result';
         function renderKmResult() {
-          const inVal = s.running ? s.kmIn : s.local.kmIn;
-          const outVal = s.running ? s.local.kmOut : s.local.kmOut;
+          let inVal = s.kmIn;
+          let outVal = localKmOutState[driverId];
           if(inVal && outVal && !isNaN(+inVal) && !isNaN(+outVal) && +outVal >= +inVal) {
             kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+outVal - +inVal) + ` km</span>`;
           } else { kmResult.textContent = ''; }
@@ -854,10 +349,10 @@
         btns.className = 'driver-btns';
         const startBtn = document.createElement('button');
         startBtn.innerHTML = `<i class="fas fa-play"></i> Start`;
-        startBtn.disabled = s.running || !(s.local.kmIn || s.kmIn) || !(s.local.date || s.date);
+        startBtn.disabled = s.running || !(s.kmIn) || !(s.date);
         startBtn.onclick = () => {
-          const valKmIn = s.local.kmIn || kmIn.value;
-          const valDate = s.local.date || dateEl.value;
+          const valKmIn = kmIn.value;
+          const valDate = dateEl.value;
           if (!valKmIn || isNaN(valKmIn)) {
             alert("Enter a valid starting km before starting.");
             return;
@@ -873,16 +368,16 @@
             timeIn: startTime.toISOString(),
             timer: 0,
             kmIn: valKmIn,
-            kmOut: "",
             date: valDate
           });
-          s.local.kmIn = undefined;
-          s.local.date = undefined;
-          s.local.kmOut = ""; // Reset local kmOut
+          localKmOutState[driverId] = ""; // Reset local end value
           if (timerIntervals[driverId]) clearInterval(timerIntervals[driverId]);
           timerIntervals[driverId] = setInterval(() => {
-            const elapsed = Math.floor((new Date() - new Date(startTime))/1000);
-            db.ref("drivers/" + driverId).update({ timer: elapsed });
+            if (driverState[driverId].running) {
+              const tstart = new Date(driverState[driverId].startTime);
+              const elapsed = Math.floor((new Date() - tstart)/1000);
+              db.ref("drivers/" + driverId).update({ timer: elapsed });
+            }
           }, 1000);
         };
         btns.appendChild(startBtn);
@@ -890,9 +385,9 @@
         const stopBtn = document.createElement('button');
         stopBtn.innerHTML = `<i class="fas fa-stop"></i> Stop`;
         stopBtn.className = "stop-btn";
-        stopBtn.disabled = !s.running || !(s.local.kmOut && s.local.kmOut !== "");
+        stopBtn.disabled = !s.running || !localKmOutState[driverId];
         stopBtn.onclick = () => {
-          const valKmOut = s.local.kmOut;
+          const valKmOut = localKmOutState[driverId];
           if (!valKmOut || Number(valKmOut) < Number(s.kmIn)) {
             alert("Enter valid ending km (greater than or equal to start)");
             return;
@@ -932,9 +427,8 @@
               timeIn: "",
               timeOut: ""
             });
+            localKmOutState[driverId] = "";
           }, 500);
-          s.local.kmIn = undefined;
-          s.local.kmOut = undefined;
         };
         btns.appendChild(stopBtn);
         card.appendChild(btns);
@@ -943,36 +437,22 @@
       });
     }
 
+    // Real-time UI updates for timer, etc.
     setInterval(() => {
-      Array.from(driverBoard.children).forEach((card, i) => {
-        const driverId = Object.keys(drivers)[i];
+      Object.keys(drivers).forEach((driverId, i) => {
         const s = driverState[driverId];
         if (!s) return;
-        const btns = card.querySelectorAll('.driver-btns button');
-        const kmIn = card.querySelector('.driver-fields-row .input-km-wrap input[type="number"]:nth-child(1)');
-        const kmOut = card.querySelectorAll('.driver-fields-row .input-km-wrap input[type="number"]')[1];
-        const dateEl = card.querySelector('.driver-date');
-        if (btns.length === 2) {
-          btns[0].disabled = s.running || !(s.local && s.local.kmIn) && !s.kmIn || !(s.local && s.local.date) && !s.date;
-          btns[1].disabled = !s.running || !(s.local && s.local.kmOut && s.local.kmOut !== "");
+        if (s.running && s.startTime) {
+          const tstart = new Date(s.startTime);
+          const elapsed = Math.floor((new Date() - tstart)/1000);
+          if (Math.abs(elapsed - (Number(s.timer)||0)) > 1) {
+            db.ref("drivers/" + driverId).update({ timer: elapsed });
+          }
         }
-        if (kmIn) kmIn.disabled = s.running;
-        if (kmOut) kmOut.disabled = !s.running ? true : false;
-        if (dateEl) dateEl.disabled = s.running;
-        const kmResult = card.querySelector('.driver-km-result');
-        const inVal = s.running ? s.kmIn : (s.local && s.local.kmIn !== undefined ? s.local.kmIn : s.kmIn || "");
-        const outVal = s.running ? (s.local && s.local.kmOut !== undefined ? s.local.kmOut : "") : "";
-        if(kmResult) {
-          if(inVal && outVal && !isNaN(+inVal) && !isNaN(+outVal) && +outVal >= +inVal) {
-            kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+outVal - +inVal) + ` km</span>`;
-          } else { kmResult.textContent = ''; }
-        }
-        const timerDisplay = card.querySelector('.driver-timer');
-        if (timerDisplay) timerDisplay.textContent = formatTime(Number(s.timer) || 0);
-        if (s.running) card.classList.add('active');
-        else card.classList.remove('active');
       });
-    }, 350);
+      renderDrivers();
+    }, 1200);
+
   </script>
 </body>
 </html>
