@@ -322,10 +322,18 @@
     }
 @media (max-width: 600px) {
   html, body { font-size: 15px; }
-  .login-card, .admin-panel { max-width: 98vw; }
+  .login-card, .admin-panel {
+    max-width: 98vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
   .edit-user-modal input { width: 98%; }
   .login-form-row { flex-direction: column; gap: 7px; }
   .login-form-row > div { width: 100%; min-width: 0; max-width: none; }
+  .login-form select, .login-form input { width: 100%; min-width: 0; max-width: none; }
+  .login-card, .admin-panel, .header { text-align: center; }
 }
     @media (max-width: 450px) {
       html, body { font-size: 14px; }
