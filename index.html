@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
   <title>Delivery Drivers Log – Ravintola Tandoori Villa</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
@@ -28,6 +28,9 @@
       font-family: 'Poppins', Arial, sans-serif;
       color: #fff;
       overflow-x: hidden;
+      /* Prevent font scaling on mobile */
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
     body {
       width: 100vw;
@@ -35,6 +38,8 @@
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      margin: 0;
+      padding: 0;
     }
     .page-wrapper {
       width: 100vw;
@@ -270,8 +275,17 @@
     .how-to-use { width: 100vw; max-width: 1050px; margin: 18px auto 0 auto; padding: 13px 14px 11px 14px; background: #161a23cc; border-radius: 10px; color: #bbdefb; font-size: 0.97em; font-family: 'Poppins', Arial, sans-serif; text-align: left; line-height: 1.6; letter-spacing: 0.01em; box-shadow: 0 2px 8px #212a4033; box-sizing: border-box; overflow-x: hidden; align-self: center;}
     @media (max-width: 1100px) { .log-board { max-width: 99vw; } .driver-card { min-width: 0; max-width: 99vw; } }
     @media (max-width: 900px) { .log-board { grid-template-columns: 1fr; padding: 0 8px; gap: 16px; } .driver-card { min-width: 98vw; max-width: 98vw; font-size: 0.97em; } }
-    @media (max-width: 600px) { .log-board { grid-template-columns: 1fr; padding: 0 2px; gap:16px;} .driver-card { min-width: 99vw; max-width: 99vw; font-size: 0.96em;} .driver-card-header .driver-date { width: 130px; min-width: 120px; max-width: 140px; font-size: 1.05em; } }
-    @media (max-width: 450px) { .driver-card-header, .driver-fields-row, .driver-btns, .driver-km-result, .driver-timer-bar {padding-left:4px;padding-right:4px;} .driver-card { font-size: 0.93em;} }
+    @media (max-width: 600px) {
+      html, body { font-size: 15px; }
+      .log-board { grid-template-columns: 1fr; padding: 0 2px; gap:16px;}
+      .driver-card { min-width: 99vw; max-width: 99vw; font-size: 0.96em;}
+      .driver-card-header .driver-date { width: 130px; min-width: 120px; max-width: 140px; font-size: 1.05em; }
+    }
+    @media (max-width: 450px) {
+      html, body { font-size: 14px; }
+      .driver-card-header, .driver-fields-row, .driver-btns, .driver-km-result, .driver-timer-bar {padding-left:4px;padding-right:4px;}
+      .driver-card { font-size: 0.93em;}
+    }
     .modal-bg { display: none; position: fixed; z-index: 500; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; background: rgba(13, 32, 70, 0.82); align-items: center; justify-content: center;}
     .modal-bg.active { display: flex;}
     .modal-content { background: var(--card-bg); color: var(--accent); border-radius: 18px; border: 2px solid var(--primary); box-shadow: 0 7px 32px #42a5f547; padding: 28px 30px 22px 30px; display: flex; flex-direction: column; align-items: center; min-width: 270px; max-width: 95vw; min-height: 135px; font-family: 'Poppins', Arial, sans-serif; animation: pop .18s cubic-bezier(.45,1.4,.68,1.02); position: relative;}
@@ -317,7 +331,7 @@
       1. Add each delivery driver's name at the top.<br>
       2. For each driver, enter today's date, the starting kilometers, and the ending kilometers.<br>
       3. When ready, press <b>Start</b> (date/start will lock, end will stay editable and timer starts).<br>
-      4. When finished, press <b>Stop</b> to save the shift (timer stops).<br>
+      4. When finished, press <b>Stop</b> to save the shift (timer stops and resets to 0 everywhere).<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
     </div>
     <div class="modal-bg" id="modalBg">
@@ -380,7 +394,6 @@
     const confirmModalDetails = document.getElementById('confirmModalDetails');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-    // KM Reports & Logout
     const showReportsBtn = document.getElementById("showReportsBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const logoutModalBg = document.getElementById("logoutModalBg");
@@ -649,19 +662,16 @@
             s.timer = Math.floor((Date.now() - new Date(s.startTime).getTime())/1000);
           }
           s.stopped = true;
-          updateDriverState(driverId);
-          const log = {
-            date: s.date,
-            name: driverObj.name,
-            kmIn: s.kmIn,
-            kmOut: s.kmOut,
-            totalKm: (+s.kmOut - +s.kmIn).toString(),
-            totalTime: formatTime(s.timer),
-            timestamp: new Date().toISOString()
-          };
-          db.ref("logs").push(log);
           s.running = false;
           s.startTime = null;
+          updateDriverState(driverId); // Saves timer value (for log) and stopped flag
+
+          // Immediately reset timer to 0 in Firebase for real time update everywhere
+          setTimeout(() => {
+            s.timer = 0;
+            updateDriverState(driverId);
+          }, 50);
+
           if (s.timerInterval) clearInterval(s.timerInterval);
           s.timerInterval = null;
           renderKmResult();
@@ -672,7 +682,19 @@
             <span style="color:var(--primary)">Total: ${+s.kmOut - +s.kmIn} km</span><br>
             <span>Time: ${formatTime(s.timer)}</span>`
           );
-          s.kmIn = ""; s.kmOut = ""; s.timer = 0; s.startTime = null; s.stopped = false;
+
+          // Save log to logs table
+          db.ref("logs").push({
+            date: s.date,
+            name: driverObj.name,
+            kmIn: s.kmIn,
+            kmOut: s.kmOut,
+            totalKm: (+s.kmOut - +s.kmIn).toString(),
+            totalTime: formatTime(s.timer),
+            timestamp: new Date().toISOString()
+          });
+
+          s.kmIn = ""; s.kmOut = ""; s.startTime = null; s.stopped = false;
           timerDisplay.textContent = formatTime(0);
           updateDriverState(driverId);
           renderDrivers();
@@ -682,12 +704,14 @@
 
         driverBoard.appendChild(card);
 
-        // Timer control: stop interval on ANY device if s.stopped!
+        // Stop timer and reset to 0 on ANY device if stopped is true!
         if (s.running && s.startTime && !s.stopped) {
           if (!s.timerInterval) {
             s.timerInterval = setInterval(() => {
-              s.timer = Math.floor((Date.now() - new Date(s.startTime).getTime())/1000);
-              timerDisplay.textContent = formatTime(s.timer);
+              if (!s.stopped) {
+                s.timer = Math.floor((Date.now() - new Date(s.startTime).getTime())/1000);
+                timerDisplay.textContent = formatTime(s.timer);
+              }
             }, 1000);
           }
         } else {
@@ -695,6 +719,7 @@
             clearInterval(s.timerInterval);
             s.timerInterval = null;
           }
+          timerDisplay.textContent = formatTime(s.timer || 0);
         }
       });
     }
@@ -720,7 +745,10 @@
             kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+s.kmOut - +s.kmIn) + ` km</span>`;
           } else { kmResult.textContent = ''; }
         }
-        if (timerDisplay) timerDisplay.textContent = formatTime(s.timer || 0);
+        // Always show timer 0 if stopped is true
+        if (timerDisplay) {
+          timerDisplay.textContent = formatTime(s.stopped ? 0 : (s.timer || 0));
+        }
         if (s.running) card.classList.add('active');
         else card.classList.remove('active');
       });
