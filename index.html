@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Delivery Drivers Log – Ravintola Tandoori Villa</title>
+  <title>Delivery Drivers "KM" Log</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
   <style>
@@ -81,10 +81,10 @@
     <div class="header">
       <div class="header-row">
         <span class="header-title">
-          <i class="fas fa-car"></i> Delivery Drivers Log
+          <i class="fas fa-car"></i>Delivery Drivers "KM" Log
         </span>
         <span class="header-desc">
-          Ravintola Tandoori Villa &nbsp;|&nbsp; Log car drivers' shift kilometers and time daily
+          Ravintola Tandoori Villa &nbsp;-&nbsp; Record daily kilometers and shift hours
         </span>
       </div>
     </div>
@@ -237,7 +237,8 @@
           running: false,
           date: driverObj.date || (new Date()).toISOString().slice(0,10),
           timer: 0,
-          startTime: null
+          startTime: null,
+          timerInterval: null
         };
         const s = driverState[driverId];
         const card = document.createElement('div');
@@ -290,8 +291,6 @@
         kmIn.placeholder = 'Start';
         kmIn.value = s.kmIn;
         kmIn.disabled = s.running;
-
-        // Only update on blur or Enter, require 5-9 digits
         kmIn.onblur = e => {
           if (e.target.value.length < 1 || e.target.value.length > 9) return;
           s.kmIn = e.target.value;
@@ -306,7 +305,6 @@
             kmIn.blur();
           }
         };
-
         const kmInUnit = document.createElement('span');
         kmInUnit.className = 'km-unit';
         kmInUnit.textContent = "Km";
@@ -324,8 +322,6 @@
         kmOut.placeholder = 'End';
         kmOut.value = s.kmOut;
         kmOut.disabled = !s.running;
-
-        // Only update on blur or Enter, require 5-9 digits
         kmOut.onblur = e => {
           if (e.target.value.length < 1 || e.target.value.length > 9) return;
           s.kmOut = e.target.value;
@@ -340,7 +336,6 @@
             kmOut.blur();
           }
         };
-
         const kmOutUnit = document.createElement('span');
         kmOutUnit.className = 'km-unit';
         kmOutUnit.textContent = "Km";
@@ -407,6 +402,10 @@
             alert("Enter valid ending km (greater than or equal to start)");
             return;
           }
+          // Calculate timer at STOP
+          if (s.startTime) {
+            s.timer = Math.floor((Date.now() - new Date(s.startTime).getTime())/1000);
+          }
           const log = {
             date: s.date,
             name: driverObj.name,
@@ -418,7 +417,6 @@
           };
           db.ref("logs").push(log);
           s.running = false;
-          s.timer = 0;
           s.startTime = null;
           updateDriverState(driverId);
           if (s.timerInterval) clearInterval(s.timerInterval);
@@ -441,7 +439,7 @@
 
         driverBoard.appendChild(card);
 
-        // Timer update (local, but startTime is from firebase for consistency)
+        // Start/stop timer only when running is true/false
         if (s.running && s.startTime) {
           if (!s.timerInterval) {
             s.timerInterval = setInterval(() => {
