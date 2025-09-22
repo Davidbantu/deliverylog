@@ -142,10 +142,9 @@
       gap: 0.22em;
     }
     .driver-addbar button:hover { background: var(--primary-hover);}
-    /* THEME/LAYOUT FROM OLDPAGE: 2 COLUMNS, 1100PX MAX, CARD WIDTHS ADJUSTED */
     .log-board {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); /* DESKTOP: 2 cards per row */
+      grid-template-columns: repeat(2, 1fr);
       gap: var(--gap);
       width: 100vw;
       max-width: 1100px;
@@ -388,36 +387,6 @@
       overflow-x: hidden;
       align-self: center;
     }
-    .realtime-table {
-      width: 98%;
-      max-width: 1200px;
-      margin: 24px auto 15px auto;
-      border-collapse: collapse;
-      background: #1b2438;
-      border-radius: 14px;
-      box-shadow: 0 2px 14px #0a2a5a22;
-      overflow-x: auto;
-    }
-    .realtime-table th, .realtime-table td {
-      padding: 9px 17px;
-      border-bottom: 1px solid #314264;
-      font-size: 1em;
-      font-family: 'Poppins', Arial, sans-serif;
-    }
-    .realtime-table th {
-      background: #17305c;
-      color: #bbdefb;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-      border-top: none;
-    }
-    .realtime-table tr:last-child td {
-      border-bottom: none;
-    }
-    .realtime-table td {
-      color: #e3f3ff;
-      font-weight: 600;
-    }
     @media (max-width: 1100px) {
       .log-board {
         max-width: 99vw;
@@ -438,13 +407,10 @@
         max-width: 98vw;
         font-size: 0.97em;
       }
-      .realtime-table th, .realtime-table td { padding: 7px 3vw; font-size: 0.93em; }
-      .realtime-table { font-size: 0.93em; }
     }
     @media (max-width: 600px) {
       .log-board { grid-template-columns: 1fr; padding: 0 2px; gap:16px;}
       .driver-card { min-width: 99vw; max-width: 99vw; font-size: 0.96em;}
-      .realtime-table th, .realtime-table td { padding: 6px 2vw; font-size: 0.90em;}
       .driver-card-header .driver-date {
         width: 130px;
         min-width: 120px;
@@ -455,7 +421,6 @@
     @media (max-width: 450px) {
       .driver-card-header, .driver-fields-row, .driver-btns, .driver-km-result, .driver-timer-bar {padding-left:4px;padding-right:4px;}
       .driver-card { font-size: 0.93em;}
-      .realtime-table th, .realtime-table td { padding: 5px 1vw; font-size: 0.85em;}
     }
     .modal-bg {
       display: none;
@@ -540,58 +505,6 @@
       from { transform: scale(0.91); opacity: 0.3;}
       to   { transform: scale(1);    opacity: 1;}
     }
-    .report-bar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 0.8em;
-      margin: 16px 0 10px 0;
-      padding: 0 4vw;
-      flex-wrap: wrap;
-      max-width: 1200px;
-      width: 98vw;
-    }
-    .report-bar button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 9px;
-      font-size: 0.97rem;
-      font-weight: 700;
-      padding: 7px 18px;
-      cursor: pointer;
-      transition: background 0.16s;
-      font-family: inherit;
-      letter-spacing: 0.01em;
-      display: flex;
-      align-items: center;
-      gap: 0.22em;
-    }
-    .report-bar button.active,
-    .report-bar button:active {
-      background: var(--primary-hover);
-    }
-    .report-bar select {
-      font-size: 1em;
-      border-radius: 7px;
-      padding: 6px 12px;
-      background: #212a40;
-      color: #bbdefb;
-      border: 1px solid #384164;
-      font-family: inherit;
-      font-weight: 600;
-      outline: none;
-    }
-    #tableWrapper {
-      display: none;
-      width: 100vw;
-      max-width: 1200px;
-      margin: 0 auto 25px auto;
-      justify-content: center;
-      align-items: flex-start;
-      flex-direction: column;
-    }
-    #tableWrapper.active { display: flex!important; }
     .modal-confirm {
       background: var(--card-bg);
       color: var(--accent);
@@ -688,22 +601,6 @@
       3. At the end of the shift, enter the ending kilometers and press <b>Stop</b>.<br>
       4. The timer and total kilometers will be shown for the day.<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
-      <br>
-      <button id="showReportBtn" style="background:var(--primary);color:#fff;font-weight:700;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;margin-top:7px;">
-        <i class="fas fa-table"></i> Show Reports Table
-      </button>
-    </div>
-
-    <div id="tableWrapper">
-      <div class="report-bar">
-        <button id="dailyBtn" class="active">Daily</button>
-        <button id="weeklyBtn">Weekly</button>
-        <button id="monthlyBtn">Monthly</button>
-        <label style="color:#bbdefb;">Driver:</label>
-        <select id="driverFilter"></select>
-        <button id="closeTableBtn"><i class="fas fa-times"></i> Close Table</button>
-      </div>
-      <div id="reportLogs"></div>
     </div>
 
     <div class="modal-bg" id="modalBg">
@@ -714,7 +611,6 @@
         <button class="modal-done-btn" id="modalDone">Done</button>
       </div>
     </div>
-    <!-- Confirmation Modal for Delete -->
     <div class="modal-bg" id="confirmModalBg">
       <div class="modal-confirm" id="confirmModalContent">
         <div class="modal-confirm-title"><i class="fas fa-exclamation-triangle" style="color:var(--red);"></i> Confirm Delete</div>
@@ -726,13 +622,8 @@
       </div>
     </div>
   </div>
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <!--
-    The JavaScript code below is identical to your latest home.html,
-    so all features and Firebase logic are preserved.
-  -->
   <script>
     function pad2(n){return String(n).padStart(2,'0');}
     function toDisplayDate(isoStr) {
@@ -752,10 +643,6 @@
       const m = String(Math.floor((sec%3600)/60)).padStart(2,0);
       const s = String(sec%60).padStart(2,0);
       return `${h}:${m}:${s}`;
-    }
-    function toISODate(dateStr) {
-      const [d,m,y] = dateStr.split('/');
-      return `${y}-${pad2(m)}-${pad2(d)}`;
     }
     let driverState = {};
     let drivers = {};
@@ -826,17 +713,28 @@
       const id = db.ref("drivers").push().key;
       db.ref("drivers/" + id).set({
         name,
-        date: new Date().toISOString().slice(0,10)
+        date: new Date().toISOString().slice(0,10),
+        kmIn: "",
+        kmOut: "",
+        running: false,
+        timer: 0,
+        startTime: "",
+        timeIn: "",
+        timeOut: ""
       });
       newDriverName.value = '';
     };
     newDriverName.addEventListener("keypress", e => {
       if (e.key === "Enter") addDriverBtn.click();
     });
+
     db.ref("drivers").on("value", snap => {
       drivers = snap.val() || {};
       renderDrivers();
     });
+
+    let timerIntervals = {};
+
     function renderDrivers() {
       driverBoard.innerHTML = "";
       const driverArr = Object.entries(drivers);
@@ -845,56 +743,51 @@
         return;
       }
       driverArr.forEach(([driverId, driverObj]) => {
-        if (!driverState[driverId]) driverState[driverId] = {
-          kmIn: "",
-          kmOut: "",
-          timer: 0,
-          running: false,
-          timerInterval: null,
-          startTime: null,
-          timeIn: null,
-          timeOut: null,
-          date: driverObj.date || (new Date()).toISOString().slice(0,10)
-        };
+        if (!driverState[driverId]) driverState[driverId] = {};
+        Object.assign(driverState[driverId], driverObj);
         const s = driverState[driverId];
+
+        if (!s.local) s.local = {};
+        let localKmIn = s.running ? s.kmIn : (s.local.kmIn !== undefined ? s.local.kmIn : s.kmIn || "");
+        let localKmOut = s.running ? s.kmOut : (s.local.kmOut !== undefined ? s.local.kmOut : s.kmOut || "");
+        let localDate = s.running ? s.date : (s.local.date !== undefined ? s.local.date : s.date || new Date().toISOString().slice(0,10));
+
         const card = document.createElement('div');
         card.className = 'driver-card' + (s.running ? ' active' : '');
         const headerRow = document.createElement('div');
         headerRow.className = 'driver-card-header';
         const nameEl = document.createElement('span');
         nameEl.className = 'driver-name';
-        nameEl.textContent = driverObj.name;
+        nameEl.textContent = s.name || '';
+
         const dateEl = document.createElement('input');
         dateEl.type = 'date';
         dateEl.className = 'driver-date';
-        dateEl.value = s.date;
+        dateEl.value = localDate;
         dateEl.maxLength = 10;
-        dateEl.onchange = e => {
-          const val = e.target.value.trim();
-          if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-            s.date = val;
-            renderDrivers();
-          } else {
-            e.target.value = s.date;
+        dateEl.disabled = s.running;
+        dateEl.oninput = e => {
+          s.local.date = e.target.value;
+        };
+        dateEl.onblur = dateEl.onkeyup = function(e) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(dateEl.value)) {
+            dateEl.value = localDate;
           }
         };
         dateEl.onclick = function(e) { e.target.showPicker && e.target.showPicker(); };
-        dateEl.onblur = dateEl.onkeyup = function(e) {
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(dateEl.value)) {
-            dateEl.value = s.date;
-          }
-        };
         const delBtn = document.createElement('button');
         delBtn.className = 'driver-delete';
         delBtn.title = "Remove driver";
         delBtn.innerHTML = "<i class='fas fa-trash'></i>";
-        delBtn.onclick = () => showConfirmModal(driverId, driverObj.name);
+        delBtn.onclick = () => showConfirmModal(driverId, s.name);
         headerRow.appendChild(nameEl);
         headerRow.appendChild(dateEl);
         headerRow.appendChild(delBtn);
         card.appendChild(headerRow);
+
         const fieldsRow = document.createElement('div');
         fieldsRow.className = 'driver-fields-row';
+
         const kmInLbl = document.createElement('label');
         kmInLbl.textContent = "In";
         const kmInWrap = document.createElement('span');
@@ -902,9 +795,12 @@
         const kmIn = document.createElement('input');
         kmIn.type = 'number';
         kmIn.placeholder = 'Start';
-        kmIn.value = s.kmIn;
+        kmIn.value = localKmIn;
         kmIn.disabled = s.running;
-        kmIn.oninput = e => { s.kmIn = e.target.value; renderKmResult(); };
+        kmIn.oninput = e => {
+          s.local.kmIn = e.target.value;
+          renderKmResult();
+        };
         const kmInUnit = document.createElement('span');
         kmInUnit.className = 'km-unit';
         kmInUnit.textContent = "Km";
@@ -912,6 +808,7 @@
         kmInWrap.appendChild(kmInUnit);
         fieldsRow.appendChild(kmInLbl);
         fieldsRow.appendChild(kmInWrap);
+
         const kmOutLbl = document.createElement('label');
         kmOutLbl.textContent = "Out";
         const kmOutWrap = document.createElement('span');
@@ -919,9 +816,12 @@
         const kmOut = document.createElement('input');
         kmOut.type = 'number';
         kmOut.placeholder = 'End';
-        kmOut.value = s.kmOut;
+        kmOut.value = localKmOut;
         kmOut.disabled = !s.running;
-        kmOut.oninput = e => { s.kmOut = e.target.value; renderKmResult(); };
+        kmOut.oninput = e => {
+          s.local.kmOut = e.target.value;
+          renderKmResult();
+        };
         const kmOutUnit = document.createElement('span');
         kmOutUnit.className = 'km-unit';
         kmOutUnit.textContent = "Km";
@@ -930,90 +830,120 @@
         fieldsRow.appendChild(kmOutLbl);
         fieldsRow.appendChild(kmOutWrap);
         card.appendChild(fieldsRow);
+
         const kmResult = document.createElement('div');
         kmResult.className = 'driver-km-result';
         function renderKmResult() {
-          if(s.kmIn && s.kmOut && !isNaN(+s.kmIn) && !isNaN(+s.kmOut) && +s.kmOut >= +s.kmIn) {
-            kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+s.kmOut - +s.kmIn) + ` km</span>`;
+          const inVal = s.running ? s.kmIn : s.local.kmIn;
+          const outVal = s.running ? s.kmOut : s.local.kmOut;
+          if(inVal && outVal && !isNaN(+inVal) && !isNaN(+outVal) && +outVal >= +inVal) {
+            kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+outVal - +inVal) + ` km</span>`;
           } else { kmResult.textContent = ''; }
         }
         renderKmResult();
         card.appendChild(kmResult);
+
         const timerBar = document.createElement('div');
         timerBar.className = 'driver-timer-bar';
         const timerDisplay = document.createElement('span');
         timerDisplay.className = 'driver-timer';
-        timerDisplay.textContent = formatTime(s.timer);
+        timerDisplay.textContent = formatTime(Number(s.timer) || 0);
         timerBar.appendChild(timerDisplay);
         card.appendChild(timerBar);
+
         const btns = document.createElement('div');
         btns.className = 'driver-btns';
         const startBtn = document.createElement('button');
         startBtn.innerHTML = `<i class="fas fa-play"></i> Start`;
-        startBtn.disabled = s.running || !s.kmIn || !s.date;
+        startBtn.disabled = s.running || !(s.local.kmIn || s.kmIn) || !(s.local.date || s.date);
         startBtn.onclick = () => {
-          s.running = true;
-          s.startTime = new Date();
-          s.timeIn = new Date();
-          s.timer = 0;
-          startBtn.disabled = true;
-          stopBtn.disabled = false;
-          kmIn.disabled = true;
-          kmOut.disabled = false;
-          timerDisplay.textContent = formatTime(s.timer);
-          s.timerInterval = setInterval(() => {
-            s.timer = Math.floor((new Date() - s.startTime)/1000);
-            timerDisplay.textContent = formatTime(s.timer);
+          const valKmIn = s.local.kmIn || kmIn.value;
+          const valDate = s.local.date || dateEl.value;
+          if (!valKmIn || isNaN(valKmIn)) {
+            alert("Enter a valid starting km before starting.");
+            return;
+          }
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(valDate)) {
+            alert("Enter a valid date before starting.");
+            return;
+          }
+          const startTime = new Date();
+          db.ref("drivers/" + driverId).update({
+            running: true,
+            startTime: startTime.toISOString(),
+            timeIn: startTime.toISOString(),
+            timer: 0,
+            kmIn: valKmIn,
+            kmOut: "",
+            date: valDate
+          });
+          s.local.kmIn = undefined;
+          s.local.kmOut = undefined;
+          s.local.date = undefined;
+          if (timerIntervals[driverId]) clearInterval(timerIntervals[driverId]);
+          timerIntervals[driverId] = setInterval(() => {
+            const elapsed = Math.floor((new Date() - new Date(startTime))/1000);
+            db.ref("drivers/" + driverId).update({ timer: elapsed });
           }, 1000);
-          card.classList.add('active');
         };
         btns.appendChild(startBtn);
+
         const stopBtn = document.createElement('button');
         stopBtn.innerHTML = `<i class="fas fa-stop"></i> Stop`;
         stopBtn.className = "stop-btn";
-        stopBtn.disabled = !s.running || !s.kmOut;
+        stopBtn.disabled = !s.running || !(s.local.kmOut || s.kmOut);
         stopBtn.onclick = () => {
-          if (!s.kmOut || Number(s.kmOut) < Number(s.kmIn)) {
+          const valKmOut = s.local.kmOut || kmOut.value;
+          if (!valKmOut || Number(valKmOut) < Number(s.kmIn)) {
             alert("Enter valid ending km (greater than or equal to start)");
             return;
           }
-          s.running = false;
-          if (s.timerInterval) clearInterval(s.timerInterval);
-          s.timerInterval = null;
-          s.timeOut = new Date();
-          startBtn.disabled = false;
-          stopBtn.disabled = true;
-          kmIn.disabled = false;
-          kmOut.disabled = true;
-          timerDisplay.textContent = formatTime(s.timer);
-          renderKmResult();
-          card.classList.remove('active');
+          db.ref("drivers/" + driverId).update({
+            kmOut: valKmOut
+          });
+          if (timerIntervals[driverId]) clearInterval(timerIntervals[driverId]);
+          const timeOut = new Date();
+          db.ref("drivers/" + driverId).update({
+            running: false,
+            timeOut: timeOut.toISOString()
+          });
           const log = {
             date: s.date,
-            name: driverObj.name,
+            name: s.name,
             timeIn: s.timeIn ? formatTimeOnly(s.timeIn) : "",
-            timeOut: s.timeOut ? formatTimeOnly(s.timeOut) : "",
+            timeOut: timeOut ? formatTimeOnly(timeOut) : "",
             kmIn: s.kmIn,
-            kmOut: s.kmOut,
-            totalKm: (+s.kmOut - +s.kmIn).toString(),
-            totalTime: formatTime(s.timer)
+            kmOut: valKmOut,
+            totalKm: (+valKmOut - +s.kmIn).toString(),
+            totalTime: formatTime(Number(s.timer) || 0)
           };
           db.ref("logs").push(log);
           showModal(
-            `<b><i class="fas fa-user"></i> ${driverObj.name}</b><br>
+            `<b><i class="fas fa-user"></i> ${s.name}</b><br>
             <span style="color:#fff;">${toDisplayDate(s.date)}</span><br>
-            <span style="color:var(--primary)">Total: ${+s.kmOut - +s.kmIn} km</span><br>
-            <span>Time: ${formatTime(s.timer)}</span>`
+            <span style="color:var(--primary)">Total: ${+valKmOut - +s.kmIn} km</span><br>
+            <span>Time: ${formatTime(Number(s.timer) || 0)}</span>`
           );
-          s.kmIn = ""; s.kmOut = ""; s.timer = 0; s.startTime = null; s.timeIn = null; s.timeOut = null;
-          timerDisplay.textContent = formatTime(0);
-          renderDrivers();
+          setTimeout(() => {
+            db.ref("drivers/" + driverId).update({
+              kmIn: "",
+              kmOut: "",
+              timer: 0,
+              startTime: "",
+              timeIn: "",
+              timeOut: ""
+            });
+          }, 500);
+          s.local.kmIn = undefined;
+          s.local.kmOut = undefined;
         };
         btns.appendChild(stopBtn);
         card.appendChild(btns);
+
         driverBoard.appendChild(card);
       });
     }
+
     setInterval(() => {
       Array.from(driverBoard.children).forEach((card, i) => {
         const driverId = Object.keys(drivers)[i];
@@ -1022,127 +952,28 @@
         const btns = card.querySelectorAll('.driver-btns button');
         const kmIn = card.querySelector('.driver-fields-row .input-km-wrap input[type="number"]:nth-child(1)');
         const kmOut = card.querySelectorAll('.driver-fields-row .input-km-wrap input[type="number"]')[1];
+        const dateEl = card.querySelector('.driver-date');
         if (btns.length === 2) {
-          btns[0].disabled = s.running || !s.kmIn || !s.date;
-          btns[1].disabled = !s.running || !s.kmOut;
+          btns[0].disabled = s.running || !(s.local && s.local.kmIn) && !s.kmIn || !(s.local && s.local.date) && !s.date;
+          btns[1].disabled = !s.running || !(s.local && s.local.kmOut) && !s.kmOut;
         }
         if (kmIn) kmIn.disabled = s.running;
         if (kmOut) kmOut.disabled = !s.running;
+        if (dateEl) dateEl.disabled = s.running;
         const kmResult = card.querySelector('.driver-km-result');
+        const inVal = s.running ? s.kmIn : (s.local && s.local.kmIn !== undefined ? s.local.kmIn : s.kmIn || "");
+        const outVal = s.running ? s.kmOut : (s.local && s.local.kmOut !== undefined ? s.local.kmOut : s.kmOut || "");
         if(kmResult) {
-          if(s.kmIn && s.kmOut && !isNaN(+s.kmIn) && !isNaN(+s.kmOut) && +s.kmOut >= +s.kmIn) {
-            kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+s.kmOut - +s.kmIn) + ` km</span>`;
+          if(inVal && outVal && !isNaN(+inVal) && !isNaN(+outVal) && +outVal >= +inVal) {
+            kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+outVal - +inVal) + ` km</span>`;
           } else { kmResult.textContent = ''; }
         }
+        const timerDisplay = card.querySelector('.driver-timer');
+        if (timerDisplay) timerDisplay.textContent = formatTime(Number(s.timer) || 0);
         if (s.running) card.classList.add('active');
         else card.classList.remove('active');
       });
     }, 350);
-
-    let allLogs = {};
-    db.ref("logs").on("value", snap => {
-      allLogs = snap.val()||{};
-      updateReportTable();
-      updateDriverFilterOptions();
-    });
-    const showReportBtn = document.getElementById('showReportBtn');
-    const tableWrapper = document.getElementById('tableWrapper');
-    const reportLogs = document.getElementById('reportLogs');
-    const dailyBtn = document.getElementById('dailyBtn');
-    const weeklyBtn = document.getElementById('weeklyBtn');
-    const monthlyBtn = document.getElementById('monthlyBtn');
-    const driverFilter = document.getElementById('driverFilter');
-    const closeTableBtn = document.getElementById('closeTableBtn');
-    let reportPeriod = "daily";
-    let reportDriver = "All";
-    function updateDriverFilterOptions() {
-      const names = new Set();
-      Object.values(allLogs).forEach(row => { if(row.name) names.add(row.name); });
-      const opts = ['All', ...Array.from(names).sort()];
-      driverFilter.innerHTML = opts.map(n => `<option value="${n}">${n}</option>`).join('');
-      if (!opts.includes(reportDriver)) reportDriver = "All";
-      driverFilter.value = reportDriver;
-    }
-    function filterLogs() {
-      const arr = Object.values(allLogs||{});
-      if (!arr.length) return [];
-      let filtered = arr;
-      if (reportDriver !== "All") filtered = filtered.filter(row => row.name === reportDriver);
-      const now = new Date();
-      if (reportPeriod === "daily") {
-        const today = now.toISOString().slice(0,10);
-        filtered = filtered.filter(row => row.date === today);
-      } else if (reportPeriod === "weekly") {
-        function getWeek(d) {
-          d = new Date(d);
-          d.setHours(0,0,0,0);
-          d.setDate(d.getDate() + 4 - (d.getDay()||7));
-          const yearStart = new Date(d.getFullYear(),0,1);
-          return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-        }
-        const thisYear = now.getFullYear();
-        const thisWeek = getWeek(now);
-        filtered = filtered.filter(row => {
-          if (!row.date) return false;
-          const d = new Date(row.date);
-          return d.getFullYear() === thisYear && getWeek(d) === thisWeek;
-        });
-      } else if (reportPeriod === "monthly") {
-        const thisMonth = now.toISOString().slice(0,7);
-        filtered = filtered.filter(row => (row.date||"").slice(0,7) === thisMonth);
-      }
-      filtered.sort((a, b) => {
-        if(a.date !== b.date) return b.date.localeCompare(a.date);
-        return (a.name||"").localeCompare(b.name||"");
-      });
-      return filtered;
-    }
-    function updateReportTable() {
-      if (!tableWrapper.classList.contains('active')) return;
-      const arr = filterLogs();
-      if (!arr.length) {
-        reportLogs.innerHTML = "<div style='color:#bbb;text-align:center;margin:18px'>No logs found for this period.</div>";
-        return;
-      }
-      let html = `<table class="realtime-table"><thead>
-        <tr><th>Date</th><th>Name</th><th>Start Km</th><th>End Km</th><th>Total Km</th><th>Total Time</th></tr>
-      </thead><tbody>`;
-      for(const row of arr){
-        html += `<tr>
-          <td>${toDisplayDate(row.date||"")}</td>
-          <td>${row.name||""}</td>
-          <td>${row.kmIn||""}</td>
-          <td>${row.kmOut||""}</td>
-          <td>${row.totalKm||""}</td>
-          <td>${row.totalTime||""}</td>
-        </tr>`;
-      }
-      html += "</tbody></table>";
-      reportLogs.innerHTML = html;
-    }
-    function setPeriod(period) {
-      reportPeriod = period;
-      dailyBtn.classList.toggle('active', period==='daily');
-      weeklyBtn.classList.toggle('active', period==='weekly');
-      monthlyBtn.classList.toggle('active', period==='monthly');
-      updateReportTable();
-    }
-    dailyBtn.onclick = () => setPeriod('daily');
-    weeklyBtn.onclick = () => setPeriod('weekly');
-    monthlyBtn.onclick = () => setPeriod('monthly');
-    driverFilter.onchange = e => {
-      reportDriver = driverFilter.value;
-      updateReportTable();
-    };
-    showReportBtn.onclick = () => {
-      tableWrapper.classList.add('active');
-      updateReportTable();
-      updateDriverFilterOptions();
-      window.scrollTo(0, tableWrapper.offsetTop-30);
-    };
-    closeTableBtn.onclick = () => {
-      tableWrapper.classList.remove('active');
-    };
   </script>
 </body>
 </html>
