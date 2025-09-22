@@ -593,7 +593,6 @@
       <button id="addDriverBtn"><i class="fas fa-plus"></i> Add</button>
     </div>
     <div class="log-board" id="driverBoard"></div>
-
     <div class="how-to-use" id="howToUse">
       <b>How to use:</b><br>
       1. Add each delivery driver's name at the top.<br>
@@ -602,7 +601,6 @@
       4. The timer and total kilometers will be shown for the day.<br>
       5. Remove a driver using the <i class="fas fa-trash"></i> icon if needed.<br>
     </div>
-
     <div class="modal-bg" id="modalBg">
       <div class="modal-content" id="modalContent">
         <button class="modal-close" id="modalClose" title="Close">&times;</button>
@@ -747,9 +745,10 @@
         Object.assign(driverState[driverId], driverObj);
         const s = driverState[driverId];
 
+        // Local-only field for KM Out
         if (!s.local) s.local = {};
         let localKmIn = s.running ? s.kmIn : (s.local.kmIn !== undefined ? s.local.kmIn : s.kmIn || "");
-        let localKmOut = s.running ? s.kmOut : (s.local.kmOut !== undefined ? s.local.kmOut : s.kmOut || "");
+        let localKmOut = s.local.kmOut !== undefined ? s.local.kmOut : "";
         let localDate = s.running ? s.date : (s.local.date !== undefined ? s.local.date : s.date || new Date().toISOString().slice(0,10));
 
         const card = document.createElement('div');
@@ -817,7 +816,7 @@
         kmOut.type = 'number';
         kmOut.placeholder = 'End';
         kmOut.value = localKmOut;
-        kmOut.disabled = !s.running;
+        kmOut.disabled = !s.running ? true : false;
         kmOut.oninput = e => {
           s.local.kmOut = e.target.value;
           renderKmResult();
@@ -835,7 +834,7 @@
         kmResult.className = 'driver-km-result';
         function renderKmResult() {
           const inVal = s.running ? s.kmIn : s.local.kmIn;
-          const outVal = s.running ? s.kmOut : s.local.kmOut;
+          const outVal = s.running ? s.local.kmOut : s.local.kmOut;
           if(inVal && outVal && !isNaN(+inVal) && !isNaN(+outVal) && +outVal >= +inVal) {
             kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+outVal - +inVal) + ` km</span>`;
           } else { kmResult.textContent = ''; }
@@ -878,8 +877,8 @@
             date: valDate
           });
           s.local.kmIn = undefined;
-          s.local.kmOut = undefined;
           s.local.date = undefined;
+          s.local.kmOut = ""; // Reset local kmOut
           if (timerIntervals[driverId]) clearInterval(timerIntervals[driverId]);
           timerIntervals[driverId] = setInterval(() => {
             const elapsed = Math.floor((new Date() - new Date(startTime))/1000);
@@ -891,9 +890,9 @@
         const stopBtn = document.createElement('button');
         stopBtn.innerHTML = `<i class="fas fa-stop"></i> Stop`;
         stopBtn.className = "stop-btn";
-        stopBtn.disabled = !s.running || !(s.local.kmOut || s.kmOut);
+        stopBtn.disabled = !s.running || !(s.local.kmOut && s.local.kmOut !== "");
         stopBtn.onclick = () => {
-          const valKmOut = s.local.kmOut || kmOut.value;
+          const valKmOut = s.local.kmOut;
           if (!valKmOut || Number(valKmOut) < Number(s.kmIn)) {
             alert("Enter valid ending km (greater than or equal to start)");
             return;
@@ -955,14 +954,14 @@
         const dateEl = card.querySelector('.driver-date');
         if (btns.length === 2) {
           btns[0].disabled = s.running || !(s.local && s.local.kmIn) && !s.kmIn || !(s.local && s.local.date) && !s.date;
-          btns[1].disabled = !s.running || !(s.local && s.local.kmOut) && !s.kmOut;
+          btns[1].disabled = !s.running || !(s.local && s.local.kmOut && s.local.kmOut !== "");
         }
         if (kmIn) kmIn.disabled = s.running;
-        if (kmOut) kmOut.disabled = !s.running;
+        if (kmOut) kmOut.disabled = !s.running ? true : false;
         if (dateEl) dateEl.disabled = s.running;
         const kmResult = card.querySelector('.driver-km-result');
         const inVal = s.running ? s.kmIn : (s.local && s.local.kmIn !== undefined ? s.local.kmIn : s.kmIn || "");
-        const outVal = s.running ? s.kmOut : (s.local && s.local.kmOut !== undefined ? s.local.kmOut : s.kmOut || "");
+        const outVal = s.running ? (s.local && s.local.kmOut !== undefined ? s.local.kmOut : "") : "";
         if(kmResult) {
           if(inVal && outVal && !isNaN(+inVal) && !isNaN(+outVal) && +outVal >= +inVal) {
             kmResult.innerHTML = `<i class="fas fa-road"></i> Today: <span style="font-weight:900;color:var(--primary)">` + (+outVal - +inVal) + ` km</span>`;
